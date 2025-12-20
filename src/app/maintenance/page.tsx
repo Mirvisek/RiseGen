@@ -8,10 +8,16 @@ export const metadata = {
     robots: "noindex, nofollow",
 };
 
+import { redirect } from "next/navigation";
+
 export default async function MaintenancePage() {
     const config = await prisma.siteConfig.findUnique({
         where: { id: "main" },
     });
+
+    if (!config?.isMaintenanceMode) {
+        redirect("/");
+    }
 
     return (
         <div className="min-h-screen bg-neutral-50 flex flex-col items-center justify-center p-4 relative overflow-hidden">
