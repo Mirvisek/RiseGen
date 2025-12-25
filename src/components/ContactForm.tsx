@@ -64,7 +64,7 @@ export function ContactForm({ recaptchaSiteKey, recaptchaVersion }: Props) {
 
     // Handle form submission with v3
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        if (recaptchaVersion === "v3" && recaptchaSiteKey) {
+        if (recaptchaVersion === "v3" && finalSiteKey) {
             e.preventDefault();
 
             if (!scriptLoaded || !window.grecaptcha) {
@@ -73,7 +73,7 @@ export function ContactForm({ recaptchaSiteKey, recaptchaVersion }: Props) {
             }
 
             try {
-                const token = await window.grecaptcha.execute(recaptchaSiteKey, { action: 'contact' });
+                const token = await window.grecaptcha.execute(finalSiteKey, { action: 'contact' });
                 setCaptchaToken(token);
 
                 // Create FormData and submit

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useActionState } from "react";
-import { updateCompanyData, updateSocialMedia, updateContactData, updateHomepageSettings, updateBranding, updateSeoConfig, updateMaintenanceMode, updateNewsletterSettings } from "@/app/admin/wyglad/actions";
+import { updateCompanyData, updateSocialMedia, updateContactData, updateHomepageSettings, updateBranding, updateSeoConfig, updateMaintenanceMode, updateNewsletterSettings, updateCodeInjection } from "@/app/admin/wyglad/actions";
 import { AppearanceNavigationForm } from "./AppearanceNavigationForm"; // Added import
 import { Loader2, Check, Upload, MapPin } from "lucide-react";
 import Image from "next/image";
@@ -57,6 +57,11 @@ interface Props {
         dripDay5Delay?: number | null;
         dripDay5Subject?: string | null;
         dripDay5Content?: string | null;
+        // Integrations
+        recaptchaSiteKey?: string | null;
+        recaptchaSecretKey?: string | null;
+        recaptchaVersion?: string | null;
+        googleAnalyticsId?: string | null;
     } | null;
 }
 
@@ -887,6 +892,51 @@ export function NewsletterSettingsForm({ config }: Props) {
     );
 }
 
+export function CodeInjectionForm({ config }: Props) {
+    const [state, formAction, isPending] = useActionState(updateCodeInjection, initialState);
+
+    return (
+        <form action={formAction} className="bg-white dark:bg-gray-900 shadow sm:rounded-lg p-6 space-y-6 border border-gray-100 dark:border-gray-800 transition-colors">
+            <div className="flex items-center gap-3 border-b dark:border-gray-800 pb-2">
+                <h3 className="text-lg font-medium leading-6 text-gray-900 dark:text-white">Integracje i Kod (reCAPTCHA, Google Analytics)</h3>
+            </div>
+            <FormFeedback state={state} />
+
+            <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                <div className="sm:col-span-6">
+                    <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-4">Google reCAPTCHA (Ochrona formularzy)</h4>
+                    <div className="grid grid-cols-1 gap-y-4">
+                        <div>
+                            <label htmlFor="recaptchaVersion" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Wersja</label>
+                            <select name="recaptchaVersion" id="recaptchaVersion" defaultValue={config?.recaptchaVersion || "v2"} className="block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border transition-colors">
+                                <option value="v2">v2 Checkbox ("Nie jestem robotem")</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label htmlFor="recaptchaSiteKey" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Site Key (Klucz Strony)</label>
+                            <input type="text" name="recaptchaSiteKey" id="recaptchaSiteKey" defaultValue={config?.recaptchaSiteKey || ""} placeholder="6L..." className="block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border transition-colors font-mono" />
+                        </div>
+                        <div>
+                            <label htmlFor="recaptchaSecretKey" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Secret Key (Klucz Sekretny)</label>
+                            <input type="password" name="recaptchaSecretKey" id="recaptchaSecretKey" defaultValue={config?.recaptchaSecretKey || ""} placeholder="6L..." className="block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border transition-colors font-mono" />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="sm:col-span-6 pt-4 border-t border-gray-100 dark:border-gray-800">
+                    <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-4">Google Analytics</h4>
+                    <div>
+                        <label htmlFor="googleAnalyticsId" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">ID Śledzenia (Measurement ID)</label>
+                        <input type="text" name="googleAnalyticsId" id="googleAnalyticsId" defaultValue={config?.googleAnalyticsId || ""} placeholder="G-XXXXXXXXXX" className="block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border transition-colors font-mono" />
+                    </div>
+                </div>
+            </div>
+
+            <SubmitButton isPending={isPending} />
+        </form>
+    );
+}
+
 export function AppearanceForm({ config }: Props) {
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
@@ -894,7 +944,7 @@ export function AppearanceForm({ config }: Props) {
             <NewsletterSettingsForm config={config} />
             <HomepageSettingsForm config={config} />
             <AppearanceNavigationForm config={config} />
-            {/* ... rest */}
+            <CodeInjectionForm config={config} />
             <BrandingForm config={config} />
             <SeoForm config={config} />
             <CompanyForm config={config} />
