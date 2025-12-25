@@ -137,6 +137,7 @@ model SiteConfig {
   recaptchaSiteKey     String?
   recaptchaSecretKey   String?
   recaptchaVersion     String?  @default("v2")
+  recaptchaProjectId   String?
   googleAnalyticsId    String?
   googleCalendarId     String?
   showEvents           Boolean  @default(true)

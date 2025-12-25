@@ -43,7 +43,7 @@ export function ApplicationForm({ recaptchaSiteKey, recaptchaVersion }: Props) {
 
     // Load reCAPTCHA Enterprise script
     useEffect(() => {
-        const keyToUse = "6Lc6NDYsAAAAAIhVMaBKLwuAUByuSjR2ZqYUdF7Y";
+        const keyToUse = recaptchaSiteKey || "6Lc6NDYsAAAAAIhVMaBKLwuAUByuSjR2ZqYUdF7Y";
 
         const script = document.createElement("script");
         script.src = `https://www.google.com/recaptcha/enterprise.js?render=${keyToUse}`;
@@ -65,11 +65,11 @@ export function ApplicationForm({ recaptchaSiteKey, recaptchaVersion }: Props) {
                 // Script might already be removed
             }
         };
-    }, []);
+    }, [recaptchaSiteKey]);
 
     // Handle form submission with Enterprise
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        const keyToUse = "6Lc6NDYsAAAAAIhVMaBKLwuAUByuSjR2ZqYUdF7Y";
+        const keyToUse = recaptchaSiteKey || "6Lc6NDYsAAAAAIhVMaBKLwuAUByuSjR2ZqYUdF7Y";
 
         e.preventDefault();
 
@@ -94,7 +94,7 @@ export function ApplicationForm({ recaptchaSiteKey, recaptchaVersion }: Props) {
 
     // Force invisible/enterprise flow layout
     const isV3 = true;
-    const finalSiteKey = "6Lc6NDYsAAAAAIhVMaBKLwuAUByuSjR2ZqYUdF7Y";
+    const finalSiteKey = recaptchaSiteKey || "6Lc6NDYsAAAAAIhVMaBKLwuAUByuSjR2ZqYUdF7Y";
 
     // Controlled state only for description to handle live validation/colors
     // For other fields, we rely on defaultValue from server state for preservation

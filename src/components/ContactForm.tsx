@@ -36,10 +36,8 @@ export function ContactForm({ recaptchaSiteKey, recaptchaVersion }: Props) {
 
     // Load reCAPTCHA Enterprise script
     useEffect(() => {
-        // Use the hardcoded key from instructions or fallback to prop/env if needed, 
-        // but user instruction was specific about the key "6Lc6NDYsAAAAAIhVMaBKLwuAUByuSjR2ZqYUdF7Y" for the script src.
-        // We will default to that if not provided (though proper practice is env var).
-        const keyToUse = "6Lc6NDYsAAAAAIhVMaBKLwuAUByuSjR2ZqYUdF7Y";
+        // Use the key from db config if available, otherwise fallback to hardcoded
+        const keyToUse = recaptchaSiteKey || "6Lc6NDYsAAAAAIhVMaBKLwuAUByuSjR2ZqYUdF7Y";
 
         const script = document.createElement("script");
         script.src = `https://www.google.com/recaptcha/enterprise.js?render=${keyToUse}`;
@@ -61,14 +59,14 @@ export function ContactForm({ recaptchaSiteKey, recaptchaVersion }: Props) {
                 // Script might already be removed
             }
         };
-    }, []);
+    }, [recaptchaSiteKey]);
 
     // Handle form submission with Enterprise
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         // We act if script is loaded.
         // We treat everything as "Enterprise" flow now based on user request.
 
-        const keyToUse = "6Lc6NDYsAAAAAIhVMaBKLwuAUByuSjR2ZqYUdF7Y";
+        const keyToUse = recaptchaSiteKey || "6Lc6NDYsAAAAAIhVMaBKLwuAUByuSjR2ZqYUdF7Y";
 
         if (state?.success) return; // Prevention
 
@@ -102,7 +100,7 @@ export function ContactForm({ recaptchaSiteKey, recaptchaVersion }: Props) {
     // The user moved to Enterprise, assuming 'v3' style invisible execution.
     // We ignore the 'isV3' toggle effectively and enforce Enterprise.
     const isV3 = true; // Force invisible/enterprise flow layout
-    const finalSiteKey = "6Lc6NDYsAAAAAIhVMaBKLwuAUByuSjR2ZqYUdF7Y";
+    const finalSiteKey = recaptchaSiteKey || "6Lc6NDYsAAAAAIhVMaBKLwuAUByuSjR2ZqYUdF7Y";
 
     if (state?.success) {
         return (

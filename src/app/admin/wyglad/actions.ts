@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { copyFile, stat } from "fs/promises";
+import { z } from "zod";
 import { join } from "path";
 import sharp from "sharp";
 
@@ -287,27 +288,48 @@ export async function updateEmailConfig(prevState: any, formData: FormData) {
     }
 }
 
+const UpdateCodeInjectionSchema = z.object({
+    recaptchaSiteKey: z.string().optional().nullable(),
+    recaptchaSecretKey: z.string().optional().nullable(),
+    recaptchaVersion: z.enum(["v2", "v3", "enterprise"]).optional().nullable(),
+    recaptchaProjectId: z.string().optional().nullable(), // Added
+    googleAnalyticsId: z.string().optional().nullable(),
+});
+
 export async function updateCodeInjection(prevState: any, formData: FormData) {
     const session = await getServerSession(authOptions);
     if (!checkPermission(session)) return { success: false, message: "Brak uprawnień." };
 
-    const recaptchaSiteKey = formData.get("recaptchaSiteKey") as string;
-    const recaptchaSecretKey = formData.get("recaptchaSecretKey") as string;
-    const recaptchaVersion = formData.get("recaptchaVersion") as string;
-    const googleAnalyticsId = formData.get("googleAnalyticsId") as string;
+    const rawData = {
+        recaptchaSiteKey: formData.get("recaptchaSiteKey") as string | null,
+        recaptchaSecretKey: formData.get("recaptchaSecretKey") as string | null,
+        recaptchaVersion: formData.get("recaptchaVersion") as string | null,
+        recaptchaProjectId: formData.get("recaptchaProjectId") as string | null, // Added
+        googleAnalyticsId: formData.get("googleAnalyticsId") as string | null,
+    };
 
-    console.log("updateCodeInjection formData:", {
-        recaptchaVersion,
-        recaptchaSiteKey,
-        recaptchaSecretKey,
-        googleAnalyticsId
-    });
+    const parsed = UpdateCodeInjectionSchema.safeParse(rawData);
+
+    if (!parsed.success) {
+        console.error("Validation error for updateCodeInjection:", parsed.error);
+        return { success: false, message: "Błąd walidacji danych." };
+    }
+
+    const data = parsed.data;
+
+    const updateData: any = {
+        recaptchaSiteKey: data.recaptchaSiteKey,
+        recaptchaSecretKey: data.recaptchaSecretKey,
+        recaptchaVersion: data.recaptchaVersion,
+        recaptchaProjectId: data.recaptchaProjectId, // Added
+        googleAnalyticsId: data.googleAnalyticsId,
+    };
 
     try {
         await prisma.siteConfig.upsert({
             where: { id: "main" },
-            update: { recaptchaSiteKey, recaptchaSecretKey, recaptchaVersion, googleAnalyticsId },
-            create: { id: "main", recaptchaSiteKey, recaptchaSecretKey, recaptchaVersion, googleAnalyticsId },
+            update: updateData,
+            create: { id: "main", ...updateData },
         });
 
         revalidatePath("/");

@@ -1,6 +1,13 @@
 import { prisma } from "@/lib/prisma";
 
-export async function verifyCaptcha(token: string | null, action: string = "contact") {
+// Define options interface
+interface VerifyCaptchaOptions {
+    apiKey?: string;
+    siteKey?: string;
+    projectId?: string;
+}
+
+export async function verifyCaptcha(token: string | null, action: string = "contact", options?: VerifyCaptchaOptions) {
     if (!token) {
         return false;
     }
@@ -13,12 +20,12 @@ export async function verifyCaptcha(token: string | null, action: string = "cont
     // 2. Project ID (provided by user: risegen-1765937398889)
     // 3. Site Key (we'll use the one from frontend: 6Lc6NDYsAAAAAIhVMaBKLwuAUByuSjR2ZqYUdF7Y)
 
-    const apiKey = config?.recaptchaSecretKey || process.env.RECAPTCHA_SECRET_KEY;
+    const apiKey = options?.apiKey || config?.recaptchaSecretKey || process.env.RECAPTCHA_SECRET_KEY;
 
     // We prefer the site key from config if it matches, otherwise fallback to the known hardcoded one
     // to ensure backend verifies against the same key frontend used.
-    const siteKey = config?.recaptchaSiteKey || process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "6Lc6NDYsAAAAAIhVMaBKLwuAUByuSjR2ZqYUdF7Y";
-    const projectId = "risegen-1765937398889";
+    const siteKey = options?.siteKey || config?.recaptchaSiteKey || process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || "6Lc6NDYsAAAAAIhVMaBKLwuAUByuSjR2ZqYUdF7Y";
+    const projectId = options?.projectId || config?.recaptchaProjectId || process.env.RECAPTCHA_PROJECT_ID || "risegen-1765937398889";
 
     if (!apiKey) {
         console.warn("reCAPTCHA Enterprise API Key (Secret Key) is missing. Bypassing verification.");
