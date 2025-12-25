@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
+import ReactMarkdown from "react-markdown";
 import { cn } from "@/lib/utils";
 
 type Project = {
@@ -133,9 +134,11 @@ export function ProjectList({ projects }: { projects: Project[] }) {
                                         </div>
                                         <div className="p-6 flex-grow flex flex-col">
                                             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{project.title}</h2>
-                                            <p className="text-gray-600 dark:text-gray-400 line-clamp-3 mb-4 flex-grow text-sm">
-                                                {project.description || (project.content ? project.content.replace(/<[^>]*>?/gm, '').substring(0, 120) + "..." : "")}
-                                            </p>
+                                            <div className="text-gray-600 dark:text-gray-400 line-clamp-3 mb-4 flex-grow text-sm">
+                                                <ReactMarkdown components={{ p: (props) => <span {...props} /> }}>
+                                                    {project.description || (project.content ? project.content.replace(/<[^>]*>?/gm, '').substring(0, 120) + "..." : "")}
+                                                </ReactMarkdown>
+                                            </div>
                                             <Link href={`/projekty/${project.slug}`} className="text-indigo-600 dark:text-indigo-400 font-medium hover:text-indigo-800 dark:hover:text-indigo-300 mt-auto inline-flex items-center text-sm">
                                                 Czytaj więcej <ArrowRight className="ml-2 h-4 w-4" />
                                             </Link>

@@ -17,7 +17,7 @@ export function FaqAccordion({ faqs }: { faqs: FAQ[] }) {
 
     return (
         <div className="space-y-4">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center italic">Często Zadawane Pytania</h2>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 text-center">Często Zadawane Pytania</h2>
             <div className="space-y-3">
                 {faqs.map((faq) => (
                     <div

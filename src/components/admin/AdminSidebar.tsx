@@ -18,7 +18,8 @@ import {
     HelpCircle,
     Award,
     Sun,
-    Moon
+    Moon,
+    Send
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
@@ -33,6 +34,7 @@ const navigation = [
     { name: "FAQ", href: "/admin/faq", icon: HelpCircle, roles: ["SUPERADMIN", "ADMIN", "EDITOR"] },
     { name: "Sukcesy", href: "/admin/stats", icon: Award, roles: ["SUPERADMIN", "ADMIN", "EDITOR"] },
     { name: "Wiadomości", href: "/admin/wiadomosci", icon: Mail, roles: ["SUPERADMIN", "ADMIN"] },
+    { name: "Newsletter", href: "/admin/newsletter", icon: Send, roles: ["SUPERADMIN", "ADMIN"] },
     { name: "Zgłoszenia", href: "/admin/zgloszenia", icon: Users, roles: ["SUPERADMIN", "ADMIN", "REKRUTER"] },
     { name: "Ustawienia", href: "/admin/wyglad", icon: Palette, roles: ["SUPERADMIN"] },
     { name: "Zmiany", href: "/admin/changes", icon: History, roles: ["SUPERADMIN", "ADMIN"] },

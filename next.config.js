@@ -3,7 +3,7 @@ const withPWA = require('next-pwa')({
     register: true,
     skipWaiting: true,
     // Włączamy PWA także w dev, żeby testować powiadomienia
-    // disable: process.env.NODE_ENV === 'development',
+    disable: process.env.NODE_ENV === 'development',
     runtimeCaching: [
         {
             urlPattern: /\/api\/auth\/.*/i,

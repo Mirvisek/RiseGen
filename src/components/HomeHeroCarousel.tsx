@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 
 type Slide = {
     id: string;
@@ -97,26 +97,49 @@ export function HomeHeroCarousel({ slides, config }: { slides: Slide[]; config?:
 
                         {/* Content Overlay - Centered */}
                         <div className="absolute inset-0 flex flex-col justify-center items-center text-center p-4">
-                            <div className="max-w-4xl animate-in fade-in zoom-in duration-700 space-y-6 flex flex-col items-center">
-                                {(slide.title || slide.subtitle) && (
+                            <div className="max-w-4xl animate-in fade-in zoom-in duration-700 flex flex-col items-center">
+                                <span className="inline-block py-1 px-3 rounded-full bg-indigo-500/30 border border-indigo-400/30 text-indigo-100 text-sm font-medium mb-6 backdrop-blur-sm shadow-lg">
+                                    Witaj w RiseGen
+                                </span>
+
+                                {(slide.title || slide.subtitle) ? (
                                     <>
-                                        {slide.title && (
-                                            <h2 className="text-4xl md:text-6xl font-bold text-white drop-shadow-lg">
-                                                {slide.title}
-                                            </h2>
-                                        )}
-                                        {slide.subtitle && (
-                                            <p className="text-lg md:text-2xl text-gray-100 drop-shadow-md max-w-2xl mx-auto">
-                                                {slide.subtitle}
-                                            </p>
-                                        )}
+                                        <h2
+                                            className="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight"
+                                            style={{ textShadow: "0 2px 4px rgba(0,0,0,0.6)" }}
+                                        >
+                                            {slide.title}
+                                        </h2>
+                                        <p
+                                            className="text-xl text-indigo-100 mb-10 leading-relaxed font-light max-w-2xl mx-auto"
+                                            style={{ textShadow: "0 1px 2px rgba(0,0,0,0.6)" }}
+                                        >
+                                            {slide.subtitle}
+                                        </p>
+                                    </>
+                                ) : (
+                                    <>
+                                        <h2
+                                            className="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight"
+                                            style={{ textShadow: "0 2px 4px rgba(0,0,0,0.6)" }}
+                                        >
+                                            Twoja przestrzeń <br />
+                                            <span className="text-indigo-200">do działania</span>
+                                        </h2>
+                                        <p
+                                            className="text-xl text-indigo-100 mb-10 leading-relaxed font-light max-w-2xl mx-auto"
+                                            style={{ textShadow: "0 1px 2px rgba(0,0,0,0.6)" }}
+                                        >
+                                            Budujemy społeczność młodych ludzi z regionu, łącząc pokolenia, wspierając rozwój i realizując ambitne projekty.
+                                        </p>
                                     </>
                                 )}
+
                                 <Link
                                     href="/zgloszenia"
-                                    className="px-8 py-3 bg-indigo-600 text-white font-semibold rounded-full hover:bg-indigo-700 transition shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                                    className="px-8 py-3 bg-white text-indigo-700 font-semibold rounded-full hover:bg-gray-100 transition shadow-lg hover:shadow-xl hover:-translate-y-0.5 inline-flex items-center gap-2"
                                 >
-                                    Dołącz do Nas
+                                    Dołącz do nas <ArrowRight size={18} />
                                 </Link>
                             </div>
                         </div>

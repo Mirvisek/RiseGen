@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+// import { Inter } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -10,11 +10,7 @@ import { SkipToContent } from "@/components/layout/SkipToContent";
 
 import { prisma } from "@/lib/prisma";
 
-const poppins = Poppins({
-  weight: ["300", "400", "500", "600", "700"],
-  subsets: ["latin"],
-  variable: "--font-poppins",
-});
+// const inter = Inter({ subsets: ["latin"] });
 
 export async function generateMetadata(): Promise<Metadata> {
   const config = await prisma.siteConfig.findUnique({ where: { id: "main" } });
@@ -87,6 +83,7 @@ import { redirect } from "next/navigation";
 export const dynamic = 'force-dynamic';
 
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { DripWorker } from "@/components/DripWorker";
 
 // ... existing imports
 
@@ -144,7 +141,7 @@ export default async function RootLayout({
       </head>
       <body
         suppressHydrationWarning
-        className={`${poppins.variable} font-sans antialiased min-h-screen flex flex-col bg-white text-gray-900 transition-colors duration-300 dark:bg-gray-950 dark:text-gray-50`}
+        className={`font-sans antialiased min-h-screen flex flex-col bg-white text-gray-900 transition-colors duration-300 dark:bg-gray-950 dark:text-gray-50`}
       >
         <ThemeProvider>
           <SkipToContent />
@@ -190,6 +187,7 @@ export default async function RootLayout({
               <Footer config={config} />
               <WcagWidget />
               <CookieBanner />
+              <DripWorker />
               <ScrollToTop />
             </HideInAdmin>
           )}

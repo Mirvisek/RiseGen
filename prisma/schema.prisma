@@ -94,6 +94,7 @@ model SiteConfig {
   facebookUrl          String?
   instagramUrl         String?
   tiktokUrl            String?
+  discordUrl           String?
   updatedAt            DateTime @updatedAt
   showBoard            Boolean  @default(true)
   showOffice           Boolean  @default(true)
@@ -142,6 +143,27 @@ model SiteConfig {
   showStats            Boolean  @default(true)
   isMaintenanceMode    Boolean  @default(false)
   maintenanceMessage   String?
+  enableNewsletter     Boolean  @default(false)
+  resendApiKey         String?
+  newsletterWelcomeSubject String?
+  newsletterWelcomeContent String?
+
+  // Drip Campaign Settings
+  enableDripCampaign  Boolean  @default(true)
+  dripDay2Delay       Int      @default(2)
+  dripDay2Subject     String?
+  dripDay2Content     String?
+  dripDay5Delay       Int      @default(5)
+  dripDay5Subject     String?
+  dripDay5Content     String?
+  lastDripRun         DateTime?
+
+  // Home Page Settings
+  showUpcomingEvents Boolean  @default(true)
+  showActionCenter   Boolean  @default(true)
+  homepageOrder      String   @default("hero,stats,action,news,events,projects,partners")
+  contactMapUrl      String?
+  contactMapPin      String?
 }
 
 model Event {
@@ -156,6 +178,17 @@ model Event {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Subscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  isActive  Boolean  @default(true)
+  name      String?
+  dripStep  Int      @default(0) // 0=Sent Welcome, 1=Sent Day2, 2=Sent Day5
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 
 model FAQ {
   id        String   @id @default(cuid())

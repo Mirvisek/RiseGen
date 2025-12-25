@@ -1,12 +1,14 @@
+
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
 import { pl } from "date-fns/locale";
 import ReactMarkdown from "react-markdown";
-import { Calendar as CalendarIcon, MapPin, Download, ArrowLeft } from "lucide-react";
+import { CalendarDays, MapPin, Download, ArrowLeft, Clock } from "lucide-react";
 import Link from "next/link";
 import { CalendarButtons } from "@/components/CalendarButtons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { ProjectGallery } from "@/components/ProjectGallery";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
@@ -27,55 +29,59 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
     const documents = JSON.parse(event.documents);
 
     return (
-        <div className="bg-white dark:bg-gray-900 min-h-screen py-12 transition-colors">
-            <div className="container mx-auto px-4 max-w-4xl">
-                <Breadcrumbs
-                    items={[
-                        { label: "Wydarzenia", href: "/wydarzenia" },
-                        { label: event.title }
-                    ]}
-                />
-
-                <Link
-                    href="/wydarzenia"
-                    className="inline-flex items-center gap-2 text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-bold mb-8 group transition"
-                >
-                    <ArrowLeft className="h-4 w-4 transform group-hover:-translate-x-1 transition-transform" />
-                    Powrót do wydarzeń
-                </Link>
-
-                <article className="space-y-8 animate-in fade-in slide-in-from-bottom-5 duration-700">
-                    <header className="space-y-4">
-                        <div className="flex gap-4 items-center">
-                            <div className="bg-indigo-600 dark:bg-indigo-500 text-white px-4 py-2 rounded-xl font-bold flex flex-col items-center shadow-lg dark:shadow-indigo-900/20">
-                                <span className="text-sm uppercase">{format(new Date(event.date), "MMM", { locale: pl })}</span>
-                                <span className="text-2xl">{format(new Date(event.date), "dd")}</span>
+        <div className="bg-white dark:bg-gray-950 transition-colors duration-300 min-h-screen">
+            {/* Hero Section */}
+            <section className="relative bg-indigo-700 text-white py-20 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-800 to-purple-800 opacity-90"></div>
+                <div className="absolute top-0 right-0 p-12 opacity-10 transform translate-x-1/2 -translate-y-1/2">
+                    <CalendarDays size={400} fill="currentColor" />
+                </div>
+                <div className="container mx-auto px-4 relative z-10 text-center max-w-4xl">
+                    <Link href="/wydarzenia" className="inline-flex items-center text-indigo-200 hover:text-white mb-6 transition">
+                        <ArrowLeft className="mr-2 h-4 w-4" /> Wróć do kalendarza
+                    </Link>
+                    <h1 className="text-3xl md:text-5xl font-bold mb-6 tracking-tight animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
+                        {event.title}
+                    </h1>
+                    <div className="flex flex-wrap justify-center items-center gap-6 text-indigo-100 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+                        <div className="flex items-center gap-2 bg-indigo-600/50 px-3 py-1 rounded-full backdrop-blur-sm border border-indigo-500/30">
+                            <CalendarDays className="w-5 h-5" />
+                            <span>{format(new Date(event.date), "d MMMM yyyy", { locale: pl })}</span>
+                        </div>
+                        <div className="flex items-center gap-2 bg-indigo-600/50 px-3 py-1 rounded-full backdrop-blur-sm border border-indigo-500/30">
+                            <Clock className="w-5 h-5" />
+                            <span>{format(new Date(event.date), "HH:mm")}</span>
+                        </div>
+                        {event.location && (
+                            <div className="flex items-center gap-2 bg-indigo-600/50 px-3 py-1 rounded-full backdrop-blur-sm border border-indigo-500/30">
+                                <MapPin className="w-5 h-5" />
+                                <span>{event.location}</span>
                             </div>
-                            <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight">
-                                {event.title}
-                            </h1>
-                        </div>
+                        )}
+                    </div>
+                </div>
+            </section>
 
-                        <div className="flex flex-wrap gap-6 text-gray-600 dark:text-gray-400 py-4 border-y border-gray-100 dark:border-gray-800">
-                            <div className="flex items-center gap-2">
-                                <CalendarIcon className="h-5 w-5 text-indigo-500 dark:text-indigo-400" />
-                                <span className="font-medium">{format(new Date(event.date), "EEEE, d MMMM yyyy, HH:mm", { locale: pl })}</span>
-                            </div>
-                            {event.location && (
-                                <div className="flex items-center gap-2">
-                                    <MapPin className="h-5 w-5 text-indigo-500 dark:text-indigo-400" />
-                                    <span className="font-medium">{event.location}</span>
-                                </div>
-                            )}
-                        </div>
-                        <div className="flex justify-start">
-                            <CalendarButtons event={event} />
-                        </div>
-                    </header>
+            <div className="container mx-auto px-4 py-8 max-w-4xl -mt-10 relative z-20">
+                <div className="mb-6">
+                    <Breadcrumbs
+                        items={[
+                            { label: "Wydarzenia", href: "/wydarzenia" },
+                            { label: event.title }
+                        ]}
+                    />
+                </div>
 
+                <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-8 lg:p-12 animate-in slide-in-from-bottom-8 duration-700 delay-300">
+
+                    <div className="flex justify-start mb-8">
+                        <CalendarButtons event={event} />
+                    </div>
+
+                    {/* Images */}
                     {images.length > 0 && (
-                        <div className="aspect-video relative rounded-3xl overflow-hidden shadow-2xl dark:shadow-none border border-gray-100 dark:border-gray-800">
-                            <img src={images[0]} alt={event.title} className="w-full h-full object-cover" />
+                        <div className="mb-10">
+                            <ProjectGallery images={images} title={event.title} />
                         </div>
                     )}
 
@@ -96,7 +102,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                     </div>
 
                     {documents.length > 0 && (
-                        <div className="bg-gray-50 dark:bg-gray-800 p-6 md:p-8 rounded-2xl border border-gray-100 dark:border-gray-700 space-y-4">
+                        <div className="mt-12 pt-8 border-t border-gray-100 dark:border-gray-800 space-y-6">
                             <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                                 <Download className="h-5 w-5" /> Dokumenty do pobrania
                             </h3>
@@ -107,18 +113,21 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
                                         href={doc.url}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex items-center justify-between p-4 bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-indigo-500 dark:hover:border-indigo-500 transition group shadow-sm"
+                                        className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-indigo-500 dark:hover:border-indigo-500 transition group shadow-sm text-decoration-none"
                                     >
-                                        <span className="font-medium text-gray-700 dark:text-gray-300 truncate mr-4">
-                                            {doc.name || "Pobierz pliku"}
-                                        </span>
-                                        <Download className="h-4 w-4 text-indigo-600 dark:text-indigo-400 transform group-hover:translate-y-0.5 transition-transform" />
+                                        <div className="flex flex-col min-w-0">
+                                            <span className="font-medium text-gray-700 dark:text-gray-300 truncate mr-2">
+                                                {doc.name || "Pobierz pliku"}
+                                            </span>
+                                            <span className="text-xs text-gray-500">Pobierz</span>
+                                        </div>
+                                        <Download className="h-4 w-4 text-indigo-600 dark:text-indigo-400 transform group-hover:translate-y-0.5 transition-transform shrink-0" />
                                     </a>
                                 ))}
                             </div>
                         </div>
                     )}
-                </article>
+                </div>
             </div>
         </div>
     );

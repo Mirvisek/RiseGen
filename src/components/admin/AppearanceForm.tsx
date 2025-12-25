@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useActionState } from "react";
-import { updateCompanyData, updateSocialMedia, updateContactData, updateHomepageSettings, updateBranding, updateSeoConfig, updateMaintenanceMode } from "@/app/admin/wyglad/actions";
+import { updateCompanyData, updateSocialMedia, updateContactData, updateHomepageSettings, updateBranding, updateSeoConfig, updateMaintenanceMode, updateNewsletterSettings } from "@/app/admin/wyglad/actions";
 import { AppearanceNavigationForm } from "./AppearanceNavigationForm"; // Added import
-import { Loader2, Check, Upload } from "lucide-react";
+import { Loader2, Check, Upload, MapPin } from "lucide-react";
 import Image from "next/image";
 
 interface Props {
@@ -18,6 +18,7 @@ interface Props {
         facebookUrl?: string | null;
         instagramUrl?: string | null;
         tiktokUrl?: string | null;
+        discordUrl?: string | null;
         showHero?: boolean;
         showNews?: boolean;
         showProjects?: boolean;
@@ -36,9 +37,26 @@ interface Props {
         accessibilityInfo?: string | null;
         showEvents?: boolean;
         showStats?: boolean;
+        showUpcomingEvents?: boolean;
+        showActionCenter?: boolean;
+        homepageOrder?: string;
         googleCalendarId?: string | null;
         isMaintenanceMode?: boolean;
         maintenanceMessage?: string | null;
+        enableNewsletter?: boolean;
+        newsletterWelcomeSubject?: string | null;
+        newsletterWelcomeContent?: string | null;
+        resendApiKey?: string | null;
+        contactMapUrl?: string | null;
+        contactMapPin?: string | null;
+        // Drip
+        enableDripCampaign?: boolean;
+        dripDay2Delay?: number | null;
+        dripDay2Subject?: string | null;
+        dripDay2Content?: string | null;
+        dripDay5Delay?: number | null;
+        dripDay5Subject?: string | null;
+        dripDay5Content?: string | null;
     } | null;
 }
 
@@ -231,6 +249,12 @@ export function SocialMediaForm({ config }: Props) {
                         <input type="url" name="tiktokUrl" id="tiktokUrl" defaultValue={config?.tiktokUrl || ""} placeholder="https://tiktok.com/@..." className="block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border transition-colors" />
                     </div>
                 </div>
+                <div className="sm:col-span-6">
+                    <label htmlFor="discordUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Discord URL</label>
+                    <div className="mt-1">
+                        <input type="url" name="discordUrl" id="discordUrl" defaultValue={config?.discordUrl || ""} placeholder="https://discord.gg/..." className="block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border transition-colors" />
+                    </div>
+                </div>
             </div>
             <SubmitButton isPending={isPending} />
         </form>
@@ -409,10 +433,39 @@ export function CalendarForm({ config }: Props) {
 
 export function ContactForm({ config }: Props) {
     const [state, formAction, isPending] = useActionState(updateContactData, initialState);
+    const [pinPreview, setPinPreview] = useState<string | null>(config?.contactMapPin || null);
+    const [pinUrl, setPinUrl] = useState<string>(config?.contactMapPin || "");
+
+    const handlePinChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (file.size > 5 * 1024 * 1024) {
+            alert("Plik jest zbyt duży (maks. 5MB)");
+            e.target.value = "";
+            return;
+        }
+        const objectUrl = URL.createObjectURL(file);
+        setPinPreview(objectUrl);
+        const formData = new FormData();
+        formData.append("file", file);
+        try {
+            const res = await fetch("/api/upload", { method: "POST", body: formData });
+            const data = await res.json();
+            if (data.url) {
+                setPinUrl(data.url);
+            }
+        } catch (err) { console.error("Upload failed", err); }
+    };
+
+    const handleRemovePin = () => {
+        setPinPreview(null);
+        setPinUrl("");
+    };
 
     return (
         <form action={formAction} className="bg-white dark:bg-gray-900 shadow sm:rounded-lg p-6 space-y-6 border border-gray-100 dark:border-gray-800 transition-colors">
-            <h3 className="text-lg font-medium leading-6 text-gray-900 dark:text-white border-b dark:border-gray-800 pb-2">Dane Kontaktowe (Strona Kontakt)</h3>
+            <h3 className="text-lg font-medium leading-6 text-gray-900 dark:text-white border-b dark:border-gray-800 pb-2">Dane Kontaktowe i Mapa</h3>
             <FormFeedback state={state} />
             <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
                 <div className="sm:col-span-6">
@@ -434,109 +487,193 @@ export function ContactForm({ config }: Props) {
                     </div>
                     <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Ten adres będzie widoczny na stronie kontaktowej oraz w stopce.</p>
                 </div>
+
+                <div className="sm:col-span-6 border-t border-gray-100 dark:border-gray-800 pt-6 mt-2">
+                    <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-4">Konfiguracja Mapy</h4>
+                    <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                        <div className="sm:col-span-6">
+                            <label htmlFor="contactMapUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Współrzędne Mapy (Lat, Lng)</label>
+                            <div className="mt-1">
+                                <input type="text" name="contactMapUrl" id="contactMapUrl" defaultValue={config?.contactMapUrl || ""} placeholder="np. 52.2297, 21.0122" className="block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border transition-colors" />
+                            </div>
+                            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                Wpisz szerokość i długość geograficzną oddzielone metodą kopiowania z Google Maps (lat, lng).
+                            </p>
+                        </div>
+
+                        <div className="sm:col-span-6">
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Własna Pinezka (Ikona)</label>
+                            <div className="flex items-center gap-4">
+                                <div className="relative h-12 w-12 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 flex items-center justify-center shrink-0">
+                                    {pinPreview ? (
+                                        <Image src={pinPreview} alt="Pin" fill className="object-contain p-1" />
+                                    ) : (
+                                        <MapPin className="text-gray-400 h-6 w-6" />
+                                    )}
+                                    <input type="file" accept="image/*" onChange={handlePinChange} className="absolute inset-0 opacity-0 cursor-pointer" />
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <input type="hidden" name="contactMapPin" value={pinUrl} />
+                                    <button type="button" className="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 font-medium relative">
+                                        Wybierz plik
+                                        <input type="file" accept="image/*" onChange={handlePinChange} className="absolute inset-0 opacity-0 cursor-pointer" />
+                                    </button>
+                                    {pinPreview && (
+                                        <button type="button" onClick={handleRemovePin} className="text-sm text-red-600 dark:text-red-400 hover:text-red-500 font-medium text-left">
+                                            Usuń
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+                            <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                Zalecany format .png z przezroczystością. Jeśli puste, użyta zostanie domyślna pinezka.
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
             <SubmitButton isPending={isPending} />
         </form>
     );
 }
 
+import { SectionOrderSortable } from "@/components/admin/SectionOrderSortable";
+
+// ... (existing imports)
+
 export function HomepageSettingsForm({ config }: Props) {
     const [state, formAction, isPending] = useActionState(updateHomepageSettings, initialState);
+    const [homepageOrder, setHomepageOrder] = useState(config?.homepageOrder || "hero,stats,action,news,events,projects,partners");
 
     return (
         <form action={formAction} className="bg-white dark:bg-gray-900 shadow sm:rounded-lg p-6 space-y-6 border border-gray-100 dark:border-gray-800 transition-colors">
             <h3 className="text-lg font-medium leading-6 text-gray-900 dark:text-white border-b dark:border-gray-800 pb-2">Ustawienia Strony Głównej</h3>
             <FormFeedback state={state} />
-            <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                    <div>
-                        <label htmlFor="showHero" className="font-medium text-gray-700 dark:text-gray-300">Sekcja Hero (Baner)</label>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Duży baner na górze strony głównej.</p>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div className="space-y-4">
+                    <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-2">Widoczność Sekcji</h4>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <label htmlFor="showHero" className="font-medium text-gray-700 dark:text-gray-300">Sekcja Hero (Baner)</label>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Duży baner na górze strony głównej.</p>
+                        </div>
+                        <div className="flex items-center h-5">
+                            <input
+                                id="showHero"
+                                name="showHero"
+                                type="checkbox"
+                                defaultChecked={config?.showHero ?? true}
+                                className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
+                            />
+                        </div>
                     </div>
-                    <div className="flex items-center h-5">
-                        <input
-                            id="showHero"
-                            name="showHero"
-                            type="checkbox"
-                            defaultChecked={config?.showHero ?? true}
-                            className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
-                        />
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <label htmlFor="showStats" className="font-medium text-gray-700 dark:text-gray-300">Licznik Sukcesów</label>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Wyświetla licznik z sukcesami pod banerem.</p>
+                        </div>
+                        <div className="flex items-center h-5">
+                            <input
+                                id="showStats"
+                                name="showStats"
+                                type="checkbox"
+                                defaultChecked={config?.showStats ?? true}
+                                className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
+                            />
+                        </div>
                     </div>
-                </div>
-                <div className="flex items-center justify-between">
-                    <div>
-                        <label htmlFor="showNews" className="font-medium text-gray-700 dark:text-gray-300">Ostatnie Aktualności</label>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Sekcja wyświetlająca 3 najnowsze aktualności.</p>
+
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <label htmlFor="showActionCenter" className="font-medium text-gray-700 dark:text-gray-300">Centrum Akcji</label>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Sekcja "Get Involved" (3 karty).</p>
+                        </div>
+                        <div className="flex items-center h-5">
+                            <input
+                                id="showActionCenter"
+                                name="showActionCenter"
+                                type="checkbox"
+                                defaultChecked={config?.showActionCenter ?? true}
+                                className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
+                            />
+                        </div>
                     </div>
-                    <div className="flex items-center h-5">
-                        <input
-                            id="showNews"
-                            name="showNews"
-                            type="checkbox"
-                            defaultChecked={config?.showNews ?? true}
-                            className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
-                        />
+
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <label htmlFor="showNews" className="font-medium text-gray-700 dark:text-gray-300">Ostatnie Aktualności</label>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Sekcja wyświetlająca 3 najnowsze aktualności.</p>
+                        </div>
+                        <div className="flex items-center h-5">
+                            <input
+                                id="showNews"
+                                name="showNews"
+                                type="checkbox"
+                                defaultChecked={config?.showNews ?? true}
+                                className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
+                            />
+                        </div>
                     </div>
-                </div>
-                <div className="flex items-center justify-between">
-                    <div>
-                        <label htmlFor="showProjects" className="font-medium text-gray-700 dark:text-gray-300">Wyróżnione Projekty</label>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Sekcja z wybranymi projektami.</p>
+
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <label htmlFor="showUpcomingEvents" className="font-medium text-gray-700 dark:text-gray-300">Widget Wydarzeń</label>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Wyświetla 3 nadchodzące wydarzenia.</p>
+                        </div>
+                        <div className="flex items-center h-5">
+                            <input
+                                id="showUpcomingEvents"
+                                name="showUpcomingEvents"
+                                type="checkbox"
+                                defaultChecked={config?.showUpcomingEvents ?? true}
+                                className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
+                            />
+                        </div>
                     </div>
-                    <div className="flex items-center h-5">
-                        <input
-                            id="showProjects"
-                            name="showProjects"
-                            type="checkbox"
-                            defaultChecked={config?.showProjects ?? true}
-                            className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
-                        />
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <label htmlFor="showProjects" className="font-medium text-gray-700 dark:text-gray-300">Wyróżnione Projekty</label>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Sekcja z wybranymi projektami.</p>
+                        </div>
+                        <div className="flex items-center h-5">
+                            <input
+                                id="showProjects"
+                                name="showProjects"
+                                type="checkbox"
+                                defaultChecked={config?.showProjects ?? true}
+                                className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
+                            />
+                        </div>
                     </div>
-                </div>
-                <div className="flex items-center justify-between">
-                    <div>
-                        <label htmlFor="showPartners" className="font-medium text-gray-700 dark:text-gray-300">Partnerzy</label>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Sekcja logotypów partnerów.</p>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <label htmlFor="showPartners" className="font-medium text-gray-700 dark:text-gray-300">Partnerzy</label>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Sekcja logotypów partnerów.</p>
+                        </div>
+                        <div className="flex items-center h-5">
+                            <input
+                                id="showPartners"
+                                name="showPartners"
+                                type="checkbox"
+                                defaultChecked={config?.showPartners ?? true}
+                                className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
+                            />
+                        </div>
                     </div>
-                    <div className="flex items-center h-5">
-                        <input
-                            id="showPartners"
-                            name="showPartners"
-                            type="checkbox"
-                            defaultChecked={config?.showPartners ?? true}
-                            className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
-                        />
-                    </div>
-                </div>
-                <div className="flex items-center justify-between">
-                    <div>
-                        <label htmlFor="showEvents" className="font-medium text-gray-700 dark:text-gray-300">Wydarzenia</label>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Włącza/wyłącza zakładkę i sekcję Wydarzeń.</p>
-                    </div>
-                    <div className="flex items-center h-5">
+                    <div className="hidden">
                         <input
                             id="showEvents"
                             name="showEvents"
                             type="checkbox"
                             defaultChecked={config?.showEvents ?? true}
-                            className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
                         />
+                        {/* showEvents is technically config flag for the whole module, but let's keep it here hidden to preserve state if needed, or expose it nicely. Actually previous form had it. I'll keep it hidden or just handled in backend to not break */}
                     </div>
                 </div>
-                <div className="flex items-center justify-between">
-                    <div>
-                        <label htmlFor="showStats" className="font-medium text-gray-700 dark:text-gray-300">Licznik Sukcesów (Statystyki)</label>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Wyświetla licznik z sukcesami pod banerem.</p>
-                    </div>
-                    <div className="flex items-center h-5">
-                        <input
-                            id="showStats"
-                            name="showStats"
-                            type="checkbox"
-                            defaultChecked={config?.showStats ?? true}
-                            className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-800"
-                        />
-                    </div>
+
+                <div>
+                    <input type="hidden" name="homepageOrder" value={homepageOrder} />
+                    <SectionOrderSortable initialOrder={homepageOrder} onOrderChange={setHomepageOrder} />
                 </div>
             </div>
             <SubmitButton isPending={isPending} />
@@ -607,13 +744,157 @@ export function MaintenanceModeForm({ config }: Props) {
         </form>
     );
 }
+export function NewsletterSettingsForm({ config }: Props) {
+    const [state, formAction, isPending] = useActionState(updateNewsletterSettings, initialState);
+
+    return (
+        <form action={formAction} className="bg-white dark:bg-gray-900 shadow sm:rounded-lg p-6 space-y-6 border border-gray-100 dark:border-gray-800 transition-colors">
+            <h3 className="text-lg font-medium leading-6 text-gray-900 dark:text-white border-b dark:border-gray-800 pb-2">Newsletter</h3>
+            <FormFeedback state={state} />
+
+            <div className="flex items-start justify-between gap-4">
+                <div>
+                    <label htmlFor="enableNewsletter" className="font-medium text-gray-700 dark:text-gray-300">Włącz Newsletter</label>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Pokaż formularz zapisu w stopce i uruchom API subskrypcji.
+                    </p>
+                </div>
+                <div className="flex items-center h-5">
+                    <input
+                        id="enableNewsletter"
+                        name="enableNewsletter"
+                        type="checkbox"
+                        defaultChecked={config?.enableNewsletter ?? false}
+                        className="focus:ring-indigo-500 h-6 w-6 text-indigo-600 border-gray-300 dark:border-gray-600 rounded cursor-pointer bg-white dark:bg-gray-800"
+                    />
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-y-6 pt-4 border-t border-gray-100 dark:border-gray-800">
+                <div>
+                    <label htmlFor="resendApiKey" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Resend API Key (Klucz API)
+                    </label>
+                    <input
+                        type="password"
+                        name="resendApiKey"
+                        id="resendApiKey"
+                        defaultValue={config?.resendApiKey || ""}
+                        placeholder="re_..."
+                        className="block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border transition-colors font-mono"
+                    />
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        Klucz z <a href="https://resend.com/api-keys" target="_blank" rel="noreferrer" className="text-indigo-600 hover:underline">Resend.com</a>. Jeśli nie podasz tutaj, użyjemy `RESEND_API_KEY` z pliku .env (jeśli istnieje).
+                    </p>
+                </div>
+
+                <div>
+                    <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-4">Konfiguracja Powitania (Email)</h4>
+                    <div className="grid grid-cols-1 gap-y-6">
+                        <div>
+                            <label htmlFor="newsletterWelcomeSubject" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Temat maila powitalnego</label>
+                            <input type="text" name="newsletterWelcomeSubject" id="newsletterWelcomeSubject" defaultValue={config?.newsletterWelcomeSubject || ""} placeholder="Witaj w RiseGen!" className="block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border transition-colors" />
+                        </div>
+                        <div>
+                            <label htmlFor="newsletterWelcomeContent" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Treść powitania (opcjonalnie)</label>
+                            <textarea name="newsletterWelcomeContent" id="newsletterWelcomeContent" rows={4} defaultValue={config?.newsletterWelcomeContent || ""} placeholder="Wpisz własną treść powitania..." className="block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border transition-colors" />
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Jeśli puste, wyślemy standardowe powitanie.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Drip Campaign Section */}
+            <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
+                <details className="group">
+                    <summary className="flex items-center justify-between cursor-pointer list-none py-2 px-1 rounded-md hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                        <h4 className="text-sm font-medium text-gray-900 dark:text-white flex items-center gap-2">
+                            <span className="p-1 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded">Automatyzacja</span>
+                            Kampania Drip (Sekwencja Powitalna)
+                        </h4>
+                        <span className="transform group-open:rotate-180 transition-transform text-gray-400">▼</span>
+                    </summary>
+
+                    <div className="mt-4 space-y-8 pl-1">
+                        <div className="flex justify-between items-start border-b border-gray-100 dark:border-gray-800 pb-4">
+                            <div>
+                                <label htmlFor="enableDripCampaign" className="font-medium text-gray-700 dark:text-gray-300">Włącz Kampanię</label>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                    Jeśli odznaczone, wysyłamy tylko powitanie (Dzień 0).
+                                </p>
+                            </div>
+                            <div className="flex items-center h-5">
+                                <input
+                                    id="enableDripCampaign"
+                                    name="enableDripCampaign"
+                                    type="checkbox"
+                                    defaultChecked={config?.enableDripCampaign ?? true}
+                                    className="focus:ring-indigo-500 h-5 w-5 text-indigo-600 border-gray-300 dark:border-gray-600 rounded cursor-pointer bg-white dark:bg-gray-800"
+                                />
+                            </div>
+                        </div>
+
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                            Skonfiguruj automatyczne maile wysyłane po określonym czasie od zapisu. System sprawdza kolejkę co godzinę (gdy strona jest odwiedzana).
+                        </p>
+
+                        {/* Day 2 Config */}
+                        <div className="space-y-4 border-l-2 border-indigo-200 dark:border-indigo-800 pl-4 py-2">
+                            <h5 className="text-sm font-semibold text-gray-800 dark:text-gray-200">Krok 2: Sukcesy</h5>
+                            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end">
+                                <div className="sm:col-span-1">
+                                    <label htmlFor="dripDay2Delay" className="block text-xs font-medium text-gray-500 mb-1">Opóźnienie (dni)</label>
+                                    <input type="number" name="dripDay2Delay" id="dripDay2Delay" defaultValue={config?.dripDay2Delay ?? 2} min={1} className="block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border" />
+                                </div>
+                                <div className="sm:col-span-3">
+                                    <label htmlFor="dripDay2Subject" className="block text-xs font-medium text-gray-500 mb-1">Temat</label>
+                                    {/* @ts-ignore */}
+                                    <input type="text" name="dripDay2Subject" id="dripDay2Subject" defaultValue={config?.dripDay2Subject || ""} placeholder="Poznaj nasze największe sukcesy! 🌟" className="block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border" />
+                                </div>
+                            </div>
+                            <div>
+                                <label htmlFor="dripDay2Content" className="block text-xs font-medium text-gray-500 mb-1">Treść (HTML opcjonalny)</label>
+                                {/* @ts-ignore */}
+                                <textarea name="dripDay2Content" id="dripDay2Content" rows={3} defaultValue={config?.dripDay2Content || ""} placeholder="Minęło kilka dni... (zostaw puste dla domyślnej treści)" className="block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border" />
+                            </div>
+                        </div>
+
+                        {/* Day 5 Config */}
+                        <div className="space-y-4 border-l-2 border-indigo-200 dark:border-indigo-800 pl-4 py-2">
+                            <h5 className="text-sm font-semibold text-gray-800 dark:text-gray-200">Krok 3: Wolontariat</h5>
+                            <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end">
+                                <div className="sm:col-span-1">
+                                    <label htmlFor="dripDay5Delay" className="block text-xs font-medium text-gray-500 mb-1">Opóźnienie (dni)</label>
+                                    <input type="number" name="dripDay5Delay" id="dripDay5Delay" defaultValue={config?.dripDay5Delay ?? 5} min={1} className="block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border" />
+                                </div>
+                                <div className="sm:col-span-3">
+                                    <label htmlFor="dripDay5Subject" className="block text-xs font-medium text-gray-500 mb-1">Temat</label>
+                                    {/* @ts-ignore */}
+                                    <input type="text" name="dripDay5Subject" id="dripDay5Subject" defaultValue={config?.dripDay5Subject || ""} placeholder="Chcesz dołączyć do działania? 🤝" className="block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border" />
+                                </div>
+                            </div>
+                            <div>
+                                <label htmlFor="dripDay5Content" className="block text-xs font-medium text-gray-500 mb-1">Treść (HTML opcjonalny)</label>
+                                {/* @ts-ignore */}
+                                <textarea name="dripDay5Content" id="dripDay5Content" rows={3} defaultValue={config?.dripDay5Content || ""} placeholder="Szukamy wolontariuszy... (zostaw puste dla domyślnej treści)" className="block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border" />
+                            </div>
+                        </div>
+                    </div>
+                </details>
+            </div>
+            <SubmitButton isPending={isPending} />
+        </form>
+    );
+}
 
 export function AppearanceForm({ config }: Props) {
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
             <MaintenanceModeForm config={config} />
+            <NewsletterSettingsForm config={config} />
             <HomepageSettingsForm config={config} />
             <AppearanceNavigationForm config={config} />
+            {/* ... rest */}
             <BrandingForm config={config} />
             <SeoForm config={config} />
             <CompanyForm config={config} />

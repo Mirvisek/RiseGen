@@ -58,7 +58,7 @@ export function EventsView({ events, googleCalendarId }: { events: Event[], goog
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 bg-white dark:bg-gray-900 p-6 md:p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800 transition-colors duration-300">
                     <div className="space-y-4">
                         <h3 className="text-xl font-bold flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
-                            <CalendarIcon className="h-5 w-5" /> Interaktywny Kalendarz
+                            <CalendarIcon className="h-5 w-5" /> Kalendarz
                         </h3>
                         <div className="calendar-container border dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
                             <Calendar
@@ -135,7 +135,7 @@ export function EventsView({ events, googleCalendarId }: { events: Event[], goog
             {/* List of All Events */}
             <div className="lg:col-span-12 space-y-8">
                 <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                    <h2 className="text-3xl font-bold text-gray-900 dark:text-white italic">Wszystkie Wydarzenia</h2>
+                    <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Wszystkie Wydarzenia</h2>
                     <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                         <span>Pokaż na stronie:</span>
                         <select

@@ -1,11 +1,13 @@
+
 import { prisma } from "@/lib/prisma";
 import { Mail, Phone, Cookie } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import ReactMarkdown from "react-markdown";
+import { Metadata } from "next";
 
-export const metadata = {
-    title: "Polityka Cookies",
-    description: "Polityka wykorzystywania plików cookies",
+export const metadata: Metadata = {
+    title: "Polityka Cookies - RiseGen",
+    description: "Informacje o wykorzystaniu plików cookies.",
 };
 
 export default async function PolitykaCookiesPage() {
@@ -106,67 +108,57 @@ ${config?.phone ? `**Telefon**: ${config.phone}` : ""}
 `;
 
     return (
-        <div className="container mx-auto px-4 py-16 max-w-4xl">
-            <Breadcrumbs items={[{ label: "Polityka Cookies" }]} />
+        <div className="bg-white dark:bg-gray-950 transition-colors duration-300 min-h-screen">
+            {/* Hero Section */}
+            <section className="relative bg-indigo-700 text-white py-20 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-indigo-800 to-purple-800 opacity-90"></div>
+                <div className="absolute top-0 right-0 p-12 opacity-10 transform translate-x-1/2 -translate-y-1/2">
+                    <Cookie size={400} fill="currentColor" />
+                </div>
+                <div className="container mx-auto px-4 relative z-10 text-center max-w-3xl">
+                    <span className="inline-block py-1 px-3 rounded-full bg-indigo-500/30 border border-indigo-400/30 text-indigo-100 text-sm font-medium mb-6 backdrop-blur-sm animate-in fade-in slide-in-from-bottom-4 duration-700">
+                        Cookies
+                    </span>
+                    <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100">
+                        Polityka <br />
+                        <span className="text-indigo-200">Plików Cookies</span>
+                    </h1>
+                    <p className="text-xl text-indigo-100 mb-10 leading-relaxed font-light animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+                        Dowiedz się jak i dlaczego wykorzystujemy pliki cookies na naszej stronie.
+                    </p>
+                </div>
+            </section>
 
-            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-8 space-y-8 transition-colors">
-                <div className="text-center space-y-4">
-                    <div className="flex justify-center">
-                        <Cookie className="h-12 w-12 text-indigo-600 dark:text-indigo-400" />
-                    </div>
-                    <h1 className="text-4xl font-bold text-gray-900 dark:text-white">Polityka Cookies</h1>
-                    <div className="w-20 h-1 bg-indigo-600 mx-auto rounded-full"></div>
+            <div className="container mx-auto px-4 py-8 max-w-4xl -mt-10 relative z-20">
+                <div className="mb-6">
+                    <Breadcrumbs items={[{ label: "Polityka Cookies" }]} />
                 </div>
 
-                <section className="prose prose-gray dark:prose-invert prose-lg max-w-none text-gray-700 dark:text-gray-300">
-                    <ReactMarkdown
-                        components={{
-                            h1: ({ node, ...props }) => <h1 className="text-3xl font-bold text-gray-900 dark:text-white mt-8 mb-4" {...props} />,
-                            h2: ({ node, ...props }) => <h2 className="text-2xl font-bold text-gray-900 dark:text-white mt-6 mb-3" {...props} />,
-                            h3: ({ node, ...props }) => <h3 className="text-xl font-semibold text-gray-900 dark:text-white mt-4 mb-2" {...props} />,
-                            p: ({ node, ...props }) => <p className="mb-4 leading-relaxed" {...props} />,
-                            ul: ({ node, ...props }) => <ul className="list-disc pl-6 mb-4 space-y-2" {...props} />,
-                            ol: ({ node, ...props }) => <ol className="list-decimal pl-6 mb-4 space-y-2" {...props} />,
-                            li: ({ node, ...props }) => <li className="leading-relaxed" {...props} />,
-                            strong: ({ node, ...props }) => <strong className="font-semibold text-gray-900 dark:text-white" {...props} />,
-                        }}
-                    >
-                        {config?.cookiePolicyContent || defaultContent}
-                    </ReactMarkdown>
-                </section>
+                <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-8 lg:p-12 animate-in slide-in-from-bottom-8 duration-700 delay-300">
+                    <section className="prose prose-lg max-w-none text-gray-600 dark:text-gray-400 dark:prose-invert">
+                        <ReactMarkdown
+                            components={{
+                                h1: ({ node, ...props }) => <h1 className="text-3xl font-bold text-gray-900 dark:text-white mt-8 mb-4 border-b dark:border-gray-700 pb-2" {...props} />,
+                                h2: ({ node, ...props }) => <h2 className="text-2xl font-bold text-gray-900 dark:text-white mt-8 mb-4" {...props} />,
+                                h3: ({ node, ...props }) => <h3 className="text-xl font-semibold text-gray-900 dark:text-white mt-6 mb-3" {...props} />,
+                                p: ({ node, ...props }) => <p className="mb-4 leading-relaxed" {...props} />,
+                                ul: ({ node, ...props }) => <ul className="list-disc pl-6 mb-4 space-y-2" {...props} />,
+                                ol: ({ node, ...props }) => <ol className="list-decimal pl-6 mb-4 space-y-2" {...props} />,
+                                li: ({ node, ...props }) => <li className="leading-relaxed" {...props} />,
+                                strong: ({ node, ...props }) => <strong className="font-semibold text-gray-900 dark:text-white" {...props} />,
+                            }}
+                        >
+                            {config?.cookiePolicyContent || defaultContent}
+                        </ReactMarkdown>
+                    </section>
 
-                <div className="bg-amber-50 dark:bg-amber-900/20 p-6 rounded-lg border border-amber-200 dark:border-amber-800/50 mt-8">
-                    <h3 className="font-semibold text-amber-900 dark:text-amber-100 mb-4 flex items-center gap-2">
-                        <Cookie className="h-5 w-5" />
-                        Zarządzanie cookies
-                    </h3>
-                    <p className="text-sm text-amber-800 dark:text-amber-200 mb-3">
-                        Możesz w każdej chwili zmienić swoje preferencje dotyczące plików cookies w ustawieniach przeglądarki.
-                        Wyłączenie niektórych cookies może wpłynąć na funkcjonalność strony.
-                    </p>
-                    <div className="space-y-3">
-                        {config?.email && (
-                            <div className="flex items-center gap-3">
-                                <Mail className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-                                <a
-                                    href={`mailto:${config.email}`}
-                                    className="text-amber-600 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 font-medium"
-                                >
-                                    {config.email}
-                                </a>
-                            </div>
-                        )}
-                        {config?.phone && (
-                            <div className="flex items-center gap-3">
-                                <Phone className="h-5 w-5 text-amber-600 dark:text-amber-400" />
-                                <a
-                                    href={`tel:${config.phone.replace(/\s/g, '')}`}
-                                    className="text-amber-600 dark:text-amber-400 hover:text-amber-800 dark:hover:text-amber-300 font-medium"
-                                >
-                                    {config.phone}
-                                </a>
-                            </div>
-                        )}
+                    <div className="bg-indigo-50 dark:bg-indigo-900/20 p-6 rounded-xl border border-indigo-100 dark:border-indigo-800/50 mt-8">
+                        <h3 className="font-bold text-indigo-900 dark:text-indigo-100 mb-4 flex items-center gap-2">
+                            Zarządzanie preferencjami
+                        </h3>
+                        <p className="text-sm text-indigo-800 dark:text-indigo-200 mb-3 leading-relaxed">
+                            Możesz w każdej chwili zmienić swoje preferencje dotyczące plików cookies w ustawieniach przeglądarki.
+                        </p>
                     </div>
                 </div>
             </div>

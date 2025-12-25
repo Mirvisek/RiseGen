@@ -44,12 +44,13 @@ export async function updateSocialMedia(prevState: any, formData: FormData) {
     const facebookUrl = formData.get("facebookUrl") as string;
     const instagramUrl = formData.get("instagramUrl") as string;
     const tiktokUrl = formData.get("tiktokUrl") as string;
+    const discordUrl = formData.get("discordUrl") as string;
 
     try {
         await prisma.siteConfig.upsert({
             where: { id: "main" },
-            update: { facebookUrl, instagramUrl, tiktokUrl },
-            create: { id: "main", facebookUrl, instagramUrl, tiktokUrl },
+            update: { facebookUrl, instagramUrl, tiktokUrl, discordUrl },
+            create: { id: "main", facebookUrl, instagramUrl, tiktokUrl, discordUrl },
         });
 
         revalidatePath("/");
@@ -68,12 +69,14 @@ export async function updateContactData(prevState: any, formData: FormData) {
     const email = formData.get("email") as string;
     const phone = formData.get("phone") as string;
     const orgAddress = formData.get("orgAddress") as string;
+    const contactMapUrl = formData.get("contactMapUrl") as string;
+    const contactMapPin = formData.get("contactMapPin") as string;
 
     try {
         await prisma.siteConfig.upsert({
             where: { id: "main" },
-            update: { email, phone, orgAddress },
-            create: { id: "main", email, phone, orgAddress },
+            update: { email, phone, orgAddress, contactMapUrl, contactMapPin },
+            create: { id: "main", email, phone, orgAddress, contactMapUrl, contactMapPin },
         });
 
         revalidatePath("/");
@@ -95,12 +98,15 @@ export async function updateHomepageSettings(prevState: any, formData: FormData)
     const showPartners = formData.get("showPartners") === "on";
     const showEvents = formData.get("showEvents") === "on";
     const showStats = formData.get("showStats") === "on";
+    const showUpcomingEvents = formData.get("showUpcomingEvents") === "on";
+    const showActionCenter = formData.get("showActionCenter") === "on";
+    const homepageOrder = formData.get("homepageOrder") as string;
 
     try {
         await prisma.siteConfig.upsert({
             where: { id: "main" },
-            update: { showHero, showNews, showProjects, showPartners, showEvents, showStats },
-            create: { id: "main", showHero, showNews, showProjects, showPartners, showEvents, showStats },
+            update: { showHero, showNews, showProjects, showPartners, showEvents, showStats, showUpcomingEvents, showActionCenter, homepageOrder },
+            create: { id: "main", showHero, showNews, showProjects, showPartners, showEvents, showStats, showUpcomingEvents, showActionCenter, homepageOrder },
         });
 
         revalidatePath("/");
@@ -402,5 +408,65 @@ export async function updateAccessibilityDeclaration(prevState: any, formData: F
     } catch (error) {
         console.error("Failed to update accessibility declaration:", error);
         return { success: false, message: "Błąd zapisu w bazie danych." };
+    }
+}
+
+export async function updateNewsletterSettings(prevState: any, formData: FormData) {
+    const session = await getServerSession(authOptions);
+    if (!checkPermission(session)) return { success: false, message: "Brak uprawnień." };
+
+    const enableNewsletter = formData.get("enableNewsletter") === "on";
+    const newsletterWelcomeSubject = (formData.get("newsletterWelcomeSubject") as string) || null;
+    const newsletterWelcomeContent = (formData.get("newsletterWelcomeContent") as string) || null;
+    const resendApiKey = (formData.get("resendApiKey") as string) || null;
+
+    // Drip Campaign
+    const enableDripCampaign = formData.get("enableDripCampaign") === "on";
+    const dripDay2Delay = parseInt((formData.get("dripDay2Delay") as string) || "2");
+    const dripDay2Subject = (formData.get("dripDay2Subject") as string) || null;
+    const dripDay2Content = (formData.get("dripDay2Content") as string) || null;
+
+    const dripDay5Delay = parseInt((formData.get("dripDay5Delay") as string) || "5");
+    const dripDay5Subject = (formData.get("dripDay5Subject") as string) || null;
+    const dripDay5Content = (formData.get("dripDay5Content") as string) || null;
+
+    try {
+        await prisma.siteConfig.upsert({
+            where: { id: "main" },
+            update: {
+                enableNewsletter,
+                newsletterWelcomeSubject,
+                newsletterWelcomeContent,
+                resendApiKey,
+                enableDripCampaign,
+                dripDay2Delay,
+                dripDay2Subject,
+                dripDay2Content,
+                dripDay5Delay,
+                dripDay5Subject,
+                dripDay5Content
+            },
+            create: {
+                id: "main",
+                enableNewsletter,
+                newsletterWelcomeSubject,
+                newsletterWelcomeContent,
+                resendApiKey,
+                enableDripCampaign,
+                dripDay2Delay,
+                dripDay2Subject,
+                dripDay2Content,
+                dripDay5Delay,
+                dripDay5Subject,
+                dripDay5Content
+            },
+        });
+
+        revalidatePath("/");
+        revalidatePath("/admin/wyglad");
+        return { success: true, message: "Ustawienia newslettera i kampanii Drip zaktualizowane." };
+    } catch (error) {
+        console.error("Failed to update newsletter settings:", error);
+        return { success: false, message: "Błąd aktualizacji ustawień newslettera." };
     }
 }

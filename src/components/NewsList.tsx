@@ -61,7 +61,7 @@ export function NewsList({ news }: { news: NewsItem[] }) {
                                 </h2>
                                 <div className="text-gray-600 dark:text-gray-400 line-clamp-3 mb-4 flex-grow prose prose-sm max-w-none dark:prose-invert">
                                     {/* Strip HTML tags for preview */}
-                                    {item.content.replace(/<[^>]*>?/gm, '').substring(0, 150)}...
+                                    {item.content.replace(/<[^>]*>?/gm, '').replace(/[*_~#\[\]`>]/g, '').substring(0, 150)}...
                                 </div>
                                 <Link
                                     href={`/aktualnosci/${item.slug}`}
