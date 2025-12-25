@@ -107,4 +107,7 @@ html.wcag-links-underline a {
   text-decoration-thickness: 2px !important;
 }
 
-/* reCAPTCHA Badge is visible */
+/* Hide reCAPTCHA Badge (Policy notice is displayed in form) */
+.grecaptcha-badge {
+  visibility: hidden;
+}

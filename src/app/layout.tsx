@@ -84,6 +84,7 @@ export const dynamic = 'force-dynamic';
 
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { DripWorker } from "@/components/DripWorker";
+import { VisitTracker } from "@/components/analytics/VisitTracker";
 
 // ... existing imports
 
@@ -144,6 +145,7 @@ export default async function RootLayout({
         className={`font-sans antialiased min-h-screen flex flex-col bg-white text-gray-900 transition-colors duration-300 dark:bg-gray-950 dark:text-gray-50`}
       >
         <ThemeProvider>
+          <VisitTracker />
           <SkipToContent />
 
           {/* JSON-LD Structured Data */}
