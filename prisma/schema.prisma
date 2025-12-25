@@ -129,6 +129,24 @@ model SiteConfig {
   emailForApplications String?  // Where to SEND notifications TO
   emailForContact      String?  // Where to SEND contact msgs TO
 
+  // SEO & Scripts
+  seoTitle             String?
+  seoDescription       String?
+  seoKeywords          String?
+  seoAuthor            String?
+  seoRobots            String?
+  faviconUrl           String?
+  ogImageUrl           String?
+  aboutUsSublinks      String?
+  headCode             String?
+  footerCode           String?
+
+  // Policies
+  accessibilityInfo    String?
+  accessibilityDeclarationContent String?
+  privacyPolicyContent String?
+  cookiePolicyContent  String?
+
   recaptchaSiteKey     String?
   recaptchaSecretKey   String?
   recaptchaVersion     String?  @default("v2")
