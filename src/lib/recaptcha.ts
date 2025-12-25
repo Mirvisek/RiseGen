@@ -54,7 +54,7 @@ export async function verifyCaptcha(token: string | null, action: string = "cont
         // Enterprise response validation
         // Check if token is valid
         if (!data.tokenProperties?.valid) {
-            console.error("reCAPTCHA Enterprise token invalid:", data.tokenProperties?.invalidReason);
+            console.error("reCAPTCHA Enterprise verification failed. Full response:", JSON.stringify(data, null, 2));
             return false;
         }
 
