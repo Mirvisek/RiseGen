@@ -211,6 +211,7 @@ export async function updateSeoConfig(prevState: any, formData: FormData) {
     const ogImageUrl = (formData.get("ogImageUrl") as string) || null;
     const accessibilityInfo = (formData.get("accessibilityInfo") as string) || null;
     const googleCalendarId = (formData.get("googleCalendarId") as string) || null;
+    const googleSiteVerification = (formData.get("googleSiteVerification") as string) || null;
 
     try {
         // 1. Detect if new icon uploaded (starts with /uploads/)
@@ -252,8 +253,8 @@ export async function updateSeoConfig(prevState: any, formData: FormData) {
 
         await prisma.siteConfig.upsert({
             where: { id: "main" },
-            update: { seoTitle, seoDescription, seoKeywords, seoAuthor, seoRobots, faviconUrl, ogImageUrl, accessibilityInfo, googleCalendarId },
-            create: { id: "main", seoTitle, seoDescription, seoKeywords, seoAuthor, seoRobots, faviconUrl, ogImageUrl, accessibilityInfo, googleCalendarId },
+            update: { seoTitle, seoDescription, seoKeywords, seoAuthor, seoRobots, faviconUrl, ogImageUrl, accessibilityInfo, googleCalendarId, googleSiteVerification },
+            create: { id: "main", seoTitle, seoDescription, seoKeywords, seoAuthor, seoRobots, faviconUrl, ogImageUrl, accessibilityInfo, googleCalendarId, googleSiteVerification },
         });
 
         revalidatePath("/");
@@ -353,6 +354,9 @@ const UpdateCodeInjectionSchema = z.object({
     recaptchaVersion: z.enum(["v2", "v3", "enterprise"]).optional().nullable(),
     recaptchaProjectId: z.string().optional().nullable(),
     googleAnalyticsId: z.string().optional().nullable(),
+    // Global Code Injection
+    headCode: z.string().optional().nullable(),
+    footerCode: z.string().optional().nullable(),
     // Discord Integration
     discordWebhookContactUrl: z.string().url().optional().nullable().or(z.literal("")),
     discordWebhookApplicationUrl: z.string().url().optional().nullable().or(z.literal("")),
@@ -380,6 +384,8 @@ export async function updateCodeInjection(prevState: any, formData: FormData) {
         recaptchaVersion: formData.get("recaptchaVersion") as string || "v2",
         recaptchaProjectId: getVal("recaptchaProjectId"),
         googleAnalyticsId: getVal("googleAnalyticsId"),
+        headCode: formData.get("headCode") as string || null,
+        footerCode: formData.get("footerCode") as string || null,
         discordWebhookContactUrl: getVal("discordWebhookContactUrl"),
         discordWebhookApplicationUrl: getVal("discordWebhookApplicationUrl"),
         p24MerchantId: getVal("p24MerchantId"),
@@ -405,6 +411,8 @@ export async function updateCodeInjection(prevState: any, formData: FormData) {
         recaptchaVersion: data.recaptchaVersion,
         recaptchaProjectId: data.recaptchaProjectId,
         googleAnalyticsId: data.googleAnalyticsId,
+        headCode: data.headCode,
+        footerCode: data.footerCode,
         discordWebhookContactUrl: data.discordWebhookContactUrl,
         discordWebhookApplicationUrl: data.discordWebhookApplicationUrl,
         p24MerchantId: data.p24MerchantId,

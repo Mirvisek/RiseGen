@@ -159,6 +159,7 @@ model SiteConfig {
   aboutUsSublinks      String?
   headCode             String?
   footerCode           String?
+  googleSiteVerification String?
 
   // Policies
   accessibilityInfo    String?

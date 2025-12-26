@@ -200,7 +200,7 @@ export function ContactForm({ recaptchaSiteKey, recaptchaVersion }: Props) {
                 <div className="bg-gray-50 dark:bg-gray-800/50 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
                     <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
                         <strong>Ochrona danych:</strong> Administratorem danych osobowych jest Stowarzyszenie RiseGen.
-                        Dane будут przetwarzane w celu odpowiedzi na wiadomość.
+                        Dane będą przetwarzane w celu odpowiedzi na wiadomość.
                         {finalSiteKey && isV3 && (
                             <span className="block mt-2">
                                 <strong>Google reCAPTCHA:</strong> Ta strona jest chroniona przez reCAPTCHA i obowiązują:

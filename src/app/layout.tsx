@@ -58,6 +58,9 @@ export async function generateMetadata(): Promise<Metadata> {
       description,
       images: config?.ogImageUrl ? [config.ogImageUrl] : undefined,
     },
+    verification: {
+      google: config?.googleSiteVerification || undefined,
+    },
     appleWebApp: {
       capable: true,
       statusBarStyle: 'default',
@@ -139,6 +142,10 @@ export default async function RootLayout({
             `,
           }}
         />
+        {/* Custom Head Code */}
+        {config?.headCode && (
+          <div dangerouslySetInnerHTML={{ __html: config.headCode }} />
+        )}
       </head>
       <body
         suppressHydrationWarning
@@ -192,6 +199,11 @@ export default async function RootLayout({
               <DripWorker />
               <ScrollToTop />
             </HideInAdmin>
+          )}
+
+          {/* Custom Footer Code */}
+          {config?.footerCode && (
+            <div dangerouslySetInnerHTML={{ __html: config.footerCode }} />
           )}
         </ThemeProvider>
       </body>

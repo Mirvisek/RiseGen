@@ -76,6 +76,9 @@ interface Props {
         discordWebhookContactUrl?: string | null;
         discordWebhookApplicationUrl?: string | null;
         dripDay5Content?: string | null;
+        googleSiteVerification?: string | null;
+        headCode?: string | null;
+        footerCode?: string | null;
 
     } | null;
 }
@@ -435,6 +438,11 @@ export function SeoForm({ config }: Props) {
                         <option value="index, nofollow">Indeksuj, nie śledź (index, nofollow)</option>
                         <option value="noindex, nofollow">Nie indeksuj i nie śledź (noindex, nofollow)</option>
                     </select>
+                </div>
+                <div className="sm:col-span-6">
+                    <label htmlFor="googleSiteVerification" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Weryfikacja Google (Google Site Verification)</label>
+                    <input type="text" name="googleSiteVerification" id="googleSiteVerification" defaultValue={config?.googleSiteVerification || ""} placeholder="Kod weryfikacyjny..." className="block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border transition-colors" />
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Kod z tagu meta name="google-site-verification".</p>
                 </div>
 
                 <div className="sm:col-span-3">
@@ -979,11 +987,26 @@ export function CodeInjectionForm({ config }: Props) {
     return (
         <form action={formAction} className="bg-white dark:bg-gray-900 shadow sm:rounded-lg p-6 space-y-6 border border-gray-100 dark:border-gray-800 transition-colors">
             <div className="flex items-center gap-3 border-b dark:border-gray-800 pb-2">
-                <h3 className="text-lg font-medium leading-6 text-gray-900 dark:text-white">Integracje i Kod (reCAPTCHA, Google Analytics)</h3>
+                <h3 className="text-lg font-medium leading-6 text-gray-900 dark:text-white">Integracje i Kod (Custom Code)</h3>
             </div>
             <FormFeedback state={state} />
 
             <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                <div className="sm:col-span-6">
+                    <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-4">Wstrzykiwanie Kodu (Globalne)</h4>
+                    <div className="space-y-4">
+                        <div>
+                            <label htmlFor="headCode" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kod w sekcji &lt;HEAD&gt;</label>
+                            <textarea name="headCode" id="headCode" rows={4} defaultValue={config?.headCode || ""} placeholder="<script>...</script>" className="block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border transition-colors font-mono" />
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Np. Google Tag Manager, Meta Pixel. Ostrożnie z błędami składni!</p>
+                        </div>
+                        <div>
+                            <label htmlFor="footerCode" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kod przed zamknięciem &lt;/BODY&gt;</label>
+                            <textarea name="footerCode" id="footerCode" rows={4} defaultValue={config?.footerCode || ""} placeholder="<script>...</script>" className="block w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border transition-colors font-mono" />
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Np. skrypty czatu, analityka.</p>
+                        </div>
+                    </div>
+                </div>
                 <div className="sm:col-span-6">
                     <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-4">Google reCAPTCHA (Ochrona formularzy)</h4>
                     <div className="grid grid-cols-1 gap-y-4">
