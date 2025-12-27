@@ -58,26 +58,18 @@ export default async function middleware(req: NextRequest, event: any) {
 
         if (forwardedProto === "http") {
             const requestHeaders = new Headers(req.headers);
-            const host = requestHeaders.get("x-forwarded-host") || requestHeaders.get("host");
+            let host = requestHeaders.get("x-forwarded-host") || requestHeaders.get("host");
 
-            const newUrl = req.nextUrl.clone();
-            newUrl.protocol = "https:";
-
-            // Ensure we use the forwarded host if available to avoid localhost redirects from proxy
-            if (host) {
-                // Try to strip port if it's 3000 or similar internal port if needed, 
-                // but mainly respect the header value which should be the public domain.
-                newUrl.host = host;
-
-                // If the host in header does not look like localhost/IP, clear explicit port 
-                // (unless it was part of the forwarded host string)
-                if (!host.includes("localhost") && !host.match(/^\d+\.\d+\.\d+\.\d+$/)) {
-                    // Force default https port behavior (browsers hide 443)
-                    newUrl.port = "";
-                }
+            // If we are in production and the host is still localhost (e.g. proxy didn't forward host),
+            // fallback to the known domain to prevent redirecting to localhost:3000.
+            if (!host || host.includes("localhost")) {
+                host = "risegen.pl";
             }
 
-            return NextResponse.redirect(newUrl, 301);
+            // Remove port if present (e.g. risegen.pl:3000 -> risegen.pl)
+            const domain = host.split(':')[0];
+
+            return NextResponse.redirect(`https://${domain}${req.nextUrl.pathname}${req.nextUrl.search}`, 301);
         }
     }
 
