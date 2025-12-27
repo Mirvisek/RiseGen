@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
-    const baseUrl = 'https://risegen.pl'; // Domena docelowa, warto później zaktualizować jeśli inna
+    const baseUrl = 'https://www.risegen.pl'; // Domena docelowa, warto później zaktualizować jeśli inna
 
     return {
         rules: {
@@ -10,5 +10,6 @@ export default function robots(): MetadataRoute.Robots {
             disallow: ['/admin', '/api'],
         },
         sitemap: `${baseUrl}/sitemap.xml`,
+        host: baseUrl,
     };
 }

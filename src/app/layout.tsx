@@ -29,7 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
     : `/favicon.ico?v=${timestamp}`;
 
   return {
-    metadataBase: new URL('https://risegen.pl'), // Fixes relative URL issues
+    metadataBase: new URL('https://www.risegen.pl'), // Fixes relative URL issues
     title: {
       default: title,
       template: `%s | ${config?.siteName || "RiseGen"}`,
@@ -163,8 +163,8 @@ export default async function RootLayout({
                 "@context": "https://schema.org",
                 "@type": "Organization",
                 "name": config?.siteName || "RiseGen",
-                "url": "https://risegen.pl",
-                "logo": config?.logoUrl ? `https://risegen.pl${config.logoUrl}` : "https://risegen.pl/logo.png",
+                "url": "https://www.risegen.pl",
+                "logo": config?.logoUrl ? `https://www.risegen.pl${config.logoUrl}` : "https://www.risegen.pl/logo.png",
                 "description": config?.seoDescription || "Stowarzyszenie RiseGen - Wspieramy rozwój i innowacje",
                 "address": {
                   "@type": "PostalAddress",

@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 export const dynamic = 'force-dynamic';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const baseUrl = 'https://risegen.pl' // Update this if domain changes
+    const baseUrl = 'https://www.risegen.pl' // Update this if domain changes
 
     // 1. Static Routes with optimized SEO priorities
     const staticRoutes: MetadataRoute.Sitemap = [
@@ -25,6 +25,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             lastModified: new Date(),
             changeFrequency: 'daily',
             priority: 0.9,
+        },
+        {
+            url: `${baseUrl}/wydarzenia`,
+            lastModified: new Date(),
+            changeFrequency: 'daily',
+            priority: 0.9,
+        },
+        {
+            url: `${baseUrl}/wesprzyj-nas`,
+            lastModified: new Date(),
+            changeFrequency: 'monthly',
+            priority: 0.8,
         },
         {
             url: `${baseUrl}/o-nas`,
@@ -99,5 +111,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         console.error("Failed to fetch news for sitemap", error);
     }
 
-    return [...staticRoutes, ...projects, ...news];
+    // 4. Dynamic Events
+    let events: MetadataRoute.Sitemap = [];
+    try {
+        const fetchedEvents = await prisma.event.findMany({
+            select: { slug: true, updatedAt: true }
+        });
+
+        events = fetchedEvents.map((item) => ({
+            url: `${baseUrl}/wydarzenia/${item.slug}`,
+            lastModified: item.updatedAt,
+            changeFrequency: 'weekly' as const,
+            priority: 0.6,
+        }));
+    } catch (error) {
+        console.error("Failed to fetch events for sitemap", error);
+    }
+
+    return [...staticRoutes, ...projects, ...news, ...events];
 }
