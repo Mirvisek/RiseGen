@@ -7,7 +7,10 @@ import { Menu, X, ChevronDown, Facebook, Instagram, Search } from "lucide-react"
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./ThemeToggle";
 import { motion } from "framer-motion";
-import { SearchModal } from "./SearchModal";
+
+import dynamic from "next/dynamic";
+
+const SearchModal = dynamic(() => import("./SearchModal").then(mod => mod.SearchModal), { ssr: false });
 
 interface NavbarProps {
     config?: {

@@ -2,6 +2,37 @@ import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+// Simple in-memory rate limiter
+const rateLimitMap = new Map<string, { count: number; lastReset: number }>();
+
+function getRateLimit(ip: string, limit: number, windowMs: number) {
+    const now = Date.now();
+    const uniqueKey = ip;
+    const record = rateLimitMap.get(uniqueKey);
+
+    if (!record || (now - record.lastReset) > windowMs) {
+        rateLimitMap.set(uniqueKey, { count: 1, lastReset: now });
+        return { success: true, count: 1 };
+    }
+
+    if (record.count >= limit) {
+        return { success: false, count: record.count };
+    }
+
+    record.count += 1;
+    return { success: true, count: record.count };
+}
+
+// Clean up old rate limit entries every 5 minutes
+setInterval(() => {
+    const now = Date.now();
+    rateLimitMap.forEach((val, key) => {
+        if (now - val.lastReset > 60000) { // Clear if older than 1 minute (simplification)
+            rateLimitMap.delete(key);
+        }
+    });
+}, 300000);
+
 // Auth middleware function
 const authMiddleware = withAuth(
     function middleware(req: any) {
@@ -53,6 +84,27 @@ const authMiddleware = withAuth(
 );
 
 export default async function middleware(req: NextRequest, event: any) {
+    const ip = req.headers.get("x-forwarded-for") || (req as any).ip || "unknown";
+    const pathname = req.nextUrl.pathname;
+
+    // --- Rate Limiting for API Routes ---
+    if (pathname.startsWith("/api")) {
+        // Stricter limit for auth and newsletter
+        const isSensitiveApi = pathname.startsWith("/api/auth") || pathname.startsWith("/api/newsletter");
+        const limit = isSensitiveApi ? 10 : 100; // 10 req/min for sensitive, 100 for general
+        const windowMs = 60 * 1000; // 1 minute
+
+        const rateCheck = getRateLimit(ip, limit, windowMs);
+
+        if (!rateCheck.success) {
+            // Return 429 Too Many Requests
+            return new NextResponse(JSON.stringify({ error: "Too many requests" }), {
+                status: 429,
+                headers: { "Content-Type": "application/json" }
+            });
+        }
+    }
+
     if (process.env.NODE_ENV === "production") {
         const forwardedProto = req.headers.get("x-forwarded-proto");
 
@@ -77,15 +129,19 @@ export default async function middleware(req: NextRequest, event: any) {
         }
     }
 
-    const pathname = req.nextUrl.pathname;
-
     // Define CSP
-    // Note: 'unsafe-inline' and 'unsafe-eval' are currently enabled to support existing functionality 
-    // (Next.js client-side hydration, admin code injection, etc.).
-    // Ideally, we should move to nonces in the future for stricter security.
+    // Note: 'unsafe-inline' is currently enabled to support existing functionality.
+    // 'unsafe-eval' is enabled only in development.
+    const isDev = process.env.NODE_ENV !== "production";
+
+    // Allow unsafe-eval in dev for hot reloading, but block in production if possible.
+    // However, some libraries might need it. If errors occur, re-enable.
+    // For now, let's keep it restricted in production.
+    const scriptSrc = `self ${isDev ? "'unsafe-eval'" : ""} 'unsafe-inline' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.googletagmanager.com https://www.google-analytics.com`;
+
     const cspHeader = `
         default-src 'self';
-        script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.googletagmanager.com https://www.google-analytics.com;
+        script-src ${scriptSrc};
         style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
         img-src 'self' blob: data: https:;
         font-src 'self' https://fonts.gstatic.com data:;
@@ -95,10 +151,13 @@ export default async function middleware(req: NextRequest, event: any) {
         base-uri 'self';
         form-action 'self';
         frame-ancestors 'self';
-        ${process.env.NODE_ENV === 'production' ? 'upgrade-insecure-requests;' : ''}
+        ${!isDev ? 'upgrade-insecure-requests;' : ''}
     `.replace(/\s{2,}/g, ' ').trim();
 
-    // 1. Prepare headers with x-pathname and CSP
+    // Permissions Policy
+    const permissionsPolicy = "camera=(), microphone=(), geolocation=(), browsing-topics=(), payment=()";
+
+    // 1. Prepare headers with x-pathname, CSP, and Permissions-Policy
     const requestHeaders = new Headers(req.headers);
     requestHeaders.set("x-pathname", pathname);
     requestHeaders.set("Content-Security-Policy", cspHeader);
@@ -108,8 +167,11 @@ export default async function middleware(req: NextRequest, event: any) {
         const response = await (authMiddleware as any)(req, event);
         if (response) {
             response.headers.set("Content-Security-Policy", cspHeader);
+            response.headers.set("Permissions-Policy", permissionsPolicy);
             response.headers.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload");
             response.headers.set("X-Frame-Options", "SAMEORIGIN");
+            response.headers.set("X-Content-Type-Options", "nosniff");
+            response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
         }
         return response;
     }
@@ -122,8 +184,11 @@ export default async function middleware(req: NextRequest, event: any) {
     });
 
     response.headers.set("Content-Security-Policy", cspHeader);
+    response.headers.set("Permissions-Policy", permissionsPolicy);
     response.headers.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload");
     response.headers.set("X-Frame-Options", "SAMEORIGIN");
+    response.headers.set("X-Content-Type-Options", "nosniff");
+    response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
 
     return response;
 }

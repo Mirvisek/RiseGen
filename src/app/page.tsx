@@ -1,11 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { ArrowRight, Rocket } from "lucide-react";
-import Image from "next/image";
+import dynamic from "next/dynamic";
 import { PartnersSection } from "@/components/sections/PartnersSection";
-import { HomeHeroCarousel } from "@/components/HomeHeroCarousel";
-import { ImpactCounter } from "@/components/ImpactCounter";
-import { ActionCenter } from "@/components/ActionCenter";
+
+const HomeHeroCarousel = dynamic(() => import("@/components/HomeHeroCarousel").then(mod => mod.HomeHeroCarousel));
+const ImpactCounter = dynamic(() => import("@/components/ImpactCounter").then(mod => mod.ImpactCounter));
+const ActionCenter = dynamic(() => import("@/components/ActionCenter").then(mod => mod.ActionCenter));
 
 export default async function Home() {
   const config = await prisma.siteConfig.findUnique({ where: { id: "main" } });
