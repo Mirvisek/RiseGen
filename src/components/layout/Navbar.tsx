@@ -95,6 +95,7 @@ export function Navbar({ config }: NavbarProps) {
                                             fill
                                             className="object-contain object-left"
                                             priority
+                                            sizes="(max-width: 640px) 128px, 160px"
                                         />
                                     </div>
                                 ) : (

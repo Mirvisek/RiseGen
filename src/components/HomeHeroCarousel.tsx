@@ -42,6 +42,7 @@ export function HomeHeroCarousel({ slides, config }: { slides: Slide[]; config?:
                         fill
                         className={`object-cover ${config.staticHeroAlignment === "top" ? "object-top" : config.staticHeroAlignment === "bottom" ? "object-bottom" : "object-center"}`}
                         priority
+                        sizes="100vw"
                     />
                 )}
                 <div className="absolute inset-0 bg-black/40 z-0" />
@@ -92,12 +93,13 @@ export function HomeHeroCarousel({ slides, config }: { slides: Slide[]; config?:
                             fill
                             className={`object-cover ${slide.alignment === "top" ? "object-top" : slide.alignment === "bottom" ? "object-bottom" : "object-center"}`}
                             priority={index === 0}
+                            sizes="100vw"
                         />
                         <div className="absolute inset-0 bg-black/30" />
 
                         {/* Content Overlay - Centered */}
                         <div className="absolute inset-0 flex flex-col justify-center items-center text-center p-4">
-                            <div className="max-w-4xl animate-in fade-in zoom-in duration-700 flex flex-col items-center">
+                            <div className="max-w-4xl animate-in fade-in zoom-in duration-300 flex flex-col items-center">
                                 <span className="inline-block py-1 px-3 rounded-full bg-indigo-500/30 border border-indigo-400/30 text-indigo-100 text-sm font-medium mb-6 backdrop-blur-sm shadow-lg">
                                     Witaj w RiseGen
                                 </span>
