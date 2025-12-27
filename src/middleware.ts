@@ -60,16 +60,20 @@ export default async function middleware(req: NextRequest, event: any) {
             const requestHeaders = new Headers(req.headers);
             let host = requestHeaders.get("x-forwarded-host") || requestHeaders.get("host");
 
-            // If we are in production and the host is still localhost (e.g. proxy didn't forward host),
-            // fallback to the known domain to prevent redirecting to localhost:3000.
-            if (!host || host.includes("localhost")) {
-                host = "risegen.pl";
+            // Remove port if present first
+            if (host) {
+                host = host.split(':')[0];
             }
 
-            // Remove port if present (e.g. risegen.pl:3000 -> risegen.pl)
-            const domain = host.split(':')[0];
+            // Enforce www.risegen.pl for production
+            // This handles:
+            // 1. localhost/IP redirects from proxy (fixing the main issue)
+            // 2. Bare domain risegen.pl -> www.risegen.pl (requested by user)
+            if (!host || host.includes("localhost") || host === "risegen.pl" || host.match(/^\d+\.\d+\.\d+\.\d+$/)) {
+                host = "www.risegen.pl";
+            }
 
-            return NextResponse.redirect(`https://${domain}${req.nextUrl.pathname}${req.nextUrl.search}`, 301);
+            return NextResponse.redirect(`https://${host}${req.nextUrl.pathname}${req.nextUrl.search}`, 301);
         }
     }
 
@@ -91,7 +95,6 @@ export default async function middleware(req: NextRequest, event: any) {
         base-uri 'self';
         form-action 'self';
         frame-ancestors 'self';
-        require-trusted-types-for 'script';
         ${process.env.NODE_ENV === 'production' ? 'upgrade-insecure-requests;' : ''}
     `.replace(/\s{2,}/g, ' ').trim();
 
