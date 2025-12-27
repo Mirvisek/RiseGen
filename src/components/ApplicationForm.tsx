@@ -103,17 +103,8 @@ export function ApplicationForm({ recaptchaSiteKey, recaptchaVersion }: Props) {
 
     // Controlled state only for description to handle live validation/colors
     // For other fields, we rely on defaultValue from server state for preservation
-    const [descValue, setDescValue] = useState("");
-
-    // Sync description with server state if available (initial load after error)
-    // We use a key trick or just defaultValue, but since we need live count, we might need useEffect or just initialize lazy
     const defaultDesc = state?.fields?.description || "";
-
-    // Ensure we start with the preserved value if present and we haven't typed yet
-    // Actually simpler: just use defaultValue for the textarea and onChange to update a counter state
-    // But to change border color dynamically, we need the current length.
-
-    const [descLength, setDescLength] = useState(defaultDesc.length);
+    const [descValue, setDescValue] = useState(defaultDesc);
     const [phoneValue, setPhoneValue] = useState(state?.fields?.phone || "");
 
     return (
@@ -207,7 +198,7 @@ export function ApplicationForm({ recaptchaSiteKey, recaptchaVersion }: Props) {
                             <input
                                 type="tel"
                                 name="phone"
-                                defaultValue={state?.fields?.phone}
+                                value={phoneValue}
                                 onChange={(e) => setPhoneValue(e.target.value)}
                                 required
                                 className={`w-full px-4 py-2 rounded-xl border bg-white dark:bg-gray-800 text-gray-900 dark:text-white outline-none transition
@@ -258,26 +249,26 @@ export function ApplicationForm({ recaptchaSiteKey, recaptchaVersion }: Props) {
                                 name="description"
                                 rows={6}
                                 required
-                                defaultValue={defaultDesc}
-                                onChange={(e) => setDescLength(e.target.value.length)}
+                                value={descValue}
+                                onChange={(e) => setDescValue(e.target.value)}
                                 className={`w-full px-4 py-2 rounded-xl border bg-white dark:bg-gray-800 text-gray-900 dark:text-white outline-none transition
-                                ${descLength < 200 ? 'border-red-300 dark:border-red-700 focus:ring-red-200 focus:border-red-500 bg-red-50/10 dark:bg-red-900/20' : ''}
-                                ${descLength >= 200 && descLength < 210 ? 'border-yellow-400 dark:border-yellow-600 focus:ring-yellow-200 focus:border-yellow-500 bg-yellow-50/10 dark:bg-yellow-900/20' : ''}
-                                ${descLength >= 210 ? 'border-green-400 dark:border-green-600 focus:ring-green-200 focus:border-green-500 bg-green-50/10 dark:bg-green-900/20' : ''}
+                                ${descValue.length < 200 ? 'border-red-300 dark:border-red-700 focus:ring-red-200 focus:border-red-500 bg-red-50/10 dark:bg-red-900/20' : ''}
+                                ${descValue.length >= 200 && descValue.length < 210 ? 'border-yellow-400 dark:border-yellow-600 focus:ring-yellow-200 focus:border-yellow-500 bg-yellow-50/10 dark:bg-yellow-900/20' : ''}
+                                ${descValue.length >= 210 ? 'border-green-400 dark:border-green-600 focus:ring-green-200 focus:border-green-500 bg-green-50/10 dark:bg-green-900/20' : ''}
                             `}
                                 placeholder="Twoje zainteresowania, dlaczego chcesz dołączyć..."
                             />
                             <div className="flex justify-between items-center text-xs">
-                                <span className={`${descLength < 200 ? 'text-red-500 dark:text-red-400' : 'text-gray-500 dark:text-gray-400'}`}>
-                                    {descLength} / 200 znaków
+                                <span className={`${descValue.length < 200 ? 'text-red-500 dark:text-red-400' : 'text-gray-500 dark:text-gray-400'}`}>
+                                    {descValue.length} / 200 znaków
                                 </span>
-                                {descLength < 200 && (
-                                    <span className="text-red-500 dark:text-red-400 font-medium">Napisz jeszcze {200 - descLength} znaków</span>
+                                {descValue.length < 200 && (
+                                    <span className="text-red-500 dark:text-red-400 font-medium">Napisz jeszcze {200 - descValue.length} znaków</span>
                                 )}
-                                {descLength >= 200 && descLength < 210 && (
+                                {descValue.length >= 200 && descValue.length < 210 && (
                                     <span className="text-yellow-600 dark:text-yellow-400 font-medium">Jeszcze trochę...</span>
                                 )}
-                                {descLength >= 210 && (
+                                {descValue.length >= 210 && (
                                     <span className="text-green-600 dark:text-green-400 font-medium">Świetnie!</span>
                                 )}
                             </div>

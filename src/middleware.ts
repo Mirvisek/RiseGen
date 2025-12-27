@@ -137,7 +137,7 @@ export default async function middleware(req: NextRequest, event: any) {
     // Allow unsafe-eval in dev for hot reloading, but block in production if possible.
     // However, some libraries might need it. If errors occur, re-enable.
     // For now, let's keep it restricted in production.
-    const scriptSrc = `self ${isDev ? "'unsafe-eval'" : ""} 'unsafe-inline' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.googletagmanager.com https://www.google-analytics.com`;
+    const scriptSrc = `'self' ${isDev ? "'unsafe-eval'" : ""} 'unsafe-inline' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.googletagmanager.com https://www.google-analytics.com`;
 
     const cspHeader = `
         default-src 'self';

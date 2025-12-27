@@ -28,9 +28,9 @@ export function LoginForm() {
             if (result?.error) {
                 setError("Nieprawidłowy email lub hasło");
                 setLoading(false);
-            } else {
-                router.push("/admin/dashboard");
-                router.refresh();
+            } else if (result?.ok) {
+                // Use window.location to force a full page reload with the new session
+                window.location.href = "/admin/dashboard";
             }
 
         } catch (err) {

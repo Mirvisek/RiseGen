@@ -240,46 +240,127 @@ export function EventsView({ events, googleCalendarId }: { events: Event[], goog
                     background: transparent !important;
                     border: none !important;
                     font-family: inherit !important;
+                    line-height: 1.5em !important;
                 }
-                .react-calendar-custom button {
+                
+                /* Navigation */
+                .react-calendar-custom .react-calendar__navigation {
+                    display: flex;
+                    height: 44px;
+                    margin-bottom: 1em;
+                }
+                .react-calendar-custom .react-calendar__navigation button {
                     color: inherit;
+                    min-width: 44px;
+                    background: none;
+                    font-size: 16px;
+                    margin-top: 8px;
+                    border-radius: 8px;
                 }
-                .dark .react-calendar-custom button:enabled:hover {
-                    background-color: #374151 !important;
-                }
-                .dark .react-calendar-custom .react-calendar__tile--now {
-                    background: #374151 !important;
-                    color: white !important;
-                }
-                .dark .react-calendar-custom .react-calendar__tile--active {
-                    background: #4f46e5 !important;
-                    color: white !important;
-                }
-                .dark .react-calendar-custom .react-calendar__month-view__days__day--weekend {
-                    color: #f87171 !important;
-                }
-                .dark .react-calendar-custom .react-calendar__navigation button:disabled {
-                    background-color: transparent !important;
-                    color: #4b5563 !important;
+                .react-calendar-custom .react-calendar__navigation button:enabled:hover,
+                .react-calendar-custom .react-calendar__navigation button:enabled:focus {
+                    background-color: #f3f4f6;
                 }
                 .dark .react-calendar-custom .react-calendar__navigation button:enabled:hover,
                 .dark .react-calendar-custom .react-calendar__navigation button:enabled:focus {
                     background-color: #374151 !important;
                 }
                 
+                /* Weekdays */
+                .react-calendar-custom .react-calendar__month-view__weekdays {
+                    text-align: center;
+                    text-transform: uppercase;
+                    font-weight: bold;
+                    font-size: 0.75em;
+                    text-decoration: none;
+                }
+                .dark .react-calendar-custom .react-calendar__month-view__weekdays {
+                     color: #9ca3af;
+                }
+                .react-calendar-custom .react-calendar__month-view__weekdays__weekday {
+                    padding: 0.5em;
+                }
+                .react-calendar-custom abbr[title] {
+                    text-decoration: none !important;
+                }
+
+                /* Tiles (Days) */
+                .react-calendar-custom .react-calendar__tile {
+                    max-width: 100%;
+                    padding: 10px 6.6667px;
+                    background: none;
+                    text-align: center;
+                    line-height: 16px;
+                    font-size: 0.875rem;
+                    border-radius: 8px;
+                    transition: background-color 0.2s, color 0.2s;
+                }
+                .dark .react-calendar-custom .react-calendar__tile {
+                     color: #e5e7eb;
+                }
+                .react-calendar-custom .react-calendar__tile:enabled:hover,
+                .react-calendar-custom .react-calendar__tile:enabled:focus {
+                    background-color: #f3f4f6;
+                }
+                .dark .react-calendar-custom .react-calendar__tile:enabled:hover,
+                .dark .react-calendar-custom .react-calendar__tile:enabled:focus {
+                    background-color: #374151 !important;
+                }
+                
+                /* Now */
+                .react-calendar-custom .react-calendar__tile--now {
+                    background: #eff6ff !important;
+                    color: #4f46e5 !important;
+                }
+                .dark .react-calendar-custom .react-calendar__tile--now {
+                    background: #374151 !important;
+                    color: #818cf8 !important;
+                }
+
+                /* Active (Selected) */
+                .react-calendar-custom .react-calendar__tile--active {
+                    background: #4f46e5 !important;
+                    color: white !important;
+                }
+                .dark .react-calendar-custom .react-calendar__tile--active {
+                    background: #4f46e5 !important;
+                    color: white !important;
+                }
+                .react-calendar-custom .react-calendar__tile--active:enabled:hover,
+                .react-calendar-custom .react-calendar__tile--active:enabled:focus {
+                    background: #4338ca !important;
+                }
+
+                /* Neighboring Month */
+                .react-calendar-custom .react-calendar__month-view__days__day--neighboringMonth {
+                    color: #9ca3af !important;
+                }
+                .dark .react-calendar-custom .react-calendar__month-view__days__day--neighboringMonth {
+                    color: #4b5563 !important;
+                }
+
+                /* Weekend */
+                .dark .react-calendar-custom .react-calendar__month-view__days__day--weekend {
+                    color: #f87171 !important;
+                }
+
+                /* Has Events Dot */
                 .has-events {
                     position: relative;
                 }
                 .has-events::after {
                     content: "";
                     position: absolute;
-                    bottom: 2px;
+                    bottom: 4px;
                     left: 50%;
                     transform: translateX(-50%);
                     width: 4px;
                     height: 4px;
                     background: #4f46e5;
                     border-radius: 50%;
+                }
+                .dark .has-events::after {
+                    background: #818cf8;
                 }
             `}</style>
         </div>
