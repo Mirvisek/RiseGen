@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Menu, X, ChevronDown, Facebook, Instagram, Search } from "lucide-react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./ThemeToggle";
 import { motion } from "framer-motion";
@@ -87,11 +88,14 @@ export function Navbar({ config }: NavbarProps) {
                         <div className="flex flex-shrink-0 items-center">
                             <Link href="/" className="flex items-center gap-2">
                                 {config?.logoUrl ? (
-                                    <div className="relative h-10 w-auto min-w-[40px] aspect-[3/1]">
-                                        <div className="relative h-10 w-full">
-                                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                                            <img src={config.logoUrl} alt={config.siteName || "RiseGen Logo"} className="h-10 w-auto object-contain" />
-                                        </div>
+                                    <div className="relative h-10 w-32 sm:w-40">
+                                        <Image
+                                            src={config.logoUrl}
+                                            alt={config.siteName || "RiseGen Logo"}
+                                            fill
+                                            className="object-contain object-left"
+                                            priority
+                                        />
                                     </div>
                                 ) : (
                                     <span className="text-2xl font-black text-indigo-600 dark:text-indigo-400 tracking-tighter">

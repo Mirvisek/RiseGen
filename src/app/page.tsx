@@ -5,9 +5,26 @@ import { ArrowRight, Rocket } from "lucide-react";
 import dynamic from "next/dynamic";
 import { PartnersSection } from "@/components/sections/PartnersSection";
 
-const HomeHeroCarousel = dynamic(() => import("@/components/HomeHeroCarousel").then(mod => mod.HomeHeroCarousel));
-const ImpactCounter = dynamic(() => import("@/components/ImpactCounter").then(mod => mod.ImpactCounter));
-const ActionCenter = dynamic(() => import("@/components/ActionCenter").then(mod => mod.ActionCenter));
+const HomeHeroCarousel = dynamic(() => import("@/components/HomeHeroCarousel").then(mod => mod.HomeHeroCarousel), {
+  ssr: true,
+  loading: () => <div className="h-[500px] w-full bg-indigo-700 animate-pulse" />
+});
+const ImpactCounter = dynamic(() => import("@/components/ImpactCounter").then(mod => mod.ImpactCounter), {
+  ssr: true,
+  loading: () => (
+    <div className="container mx-auto px-4 -mt-10 relative z-20 max-w-6xl mb-8">
+      <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-8 md:p-12 h-[320px] md:h-[180px] animate-pulse" />
+    </div>
+  )
+});
+const ActionCenter = dynamic(() => import("@/components/ActionCenter").then(mod => mod.ActionCenter), {
+  ssr: true,
+  loading: () => (
+    <div className="hidden md:block container mx-auto px-4 max-w-6xl py-8">
+      <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-8 md:p-12 h-[412px] animate-pulse" />
+    </div>
+  )
+});
 
 export default async function Home() {
   const config = await prisma.siteConfig.findUnique({ where: { id: "main" } });

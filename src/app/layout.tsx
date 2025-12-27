@@ -144,6 +144,14 @@ export default async function RootLayout({
                 } else {
                   root.classList.add(theme);
                 }
+
+                // WCAG Initialization
+                const fontSize = localStorage.getItem('wcag-fontsize');
+                if (fontSize === 'large') root.classList.add('wcag-text-large');
+                if (fontSize === 'xlarge') root.classList.add('wcag-text-xlarge');
+                
+                if (localStorage.getItem('wcag-contrast') === 'true') root.classList.add('wcag-contrast-high');
+                if (localStorage.getItem('wcag-links') === 'true') root.classList.add('wcag-links-underline');
               } catch (e) {}
             `,
           }}
