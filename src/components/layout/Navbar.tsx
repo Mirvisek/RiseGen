@@ -31,12 +31,22 @@ export function Navbar({ config }: NavbarProps) {
     const [hoveredItem, setHoveredItem] = useState<string | null>(null);
     const pathname = usePathname();
 
+    const aboutUsSublinks = (() => {
+        if (!config?.aboutUsSublinks) return null;
+        try {
+            return JSON.parse(config.aboutUsSublinks) as { name: string; href: string }[];
+        } catch (e) {
+            console.error("Failed to parse aboutUsSublinks", e);
+            return null;
+        }
+    })();
+
     const staticNavigation = [
         { name: "Start", href: "/" },
         {
             name: "O Nas",
             href: "/o-nas",
-            children: config?.aboutUsSublinks ? (JSON.parse(config.aboutUsSublinks) as { name: string; href: string }[]) : [
+            children: aboutUsSublinks || [
                 { name: "Poznaj Nasz Zespół", href: "/o-nas/zespol" },
                 { name: "Dokumenty", href: "/o-nas/dokumenty" },
                 { name: "Pytania i Odpowiedzi (FAQ)", href: "/o-nas/faq" },
@@ -87,9 +97,7 @@ export function Navbar({ config }: NavbarProps) {
                                     return (
                                         <div
                                             key={item.name}
-                                            className="relative flex items-center h-full"
-                                            onMouseEnter={() => setHoveredItem(item.name)}
-                                            onMouseLeave={() => setHoveredItem(null)}
+                                            className="group relative flex items-center h-full"
                                         >
                                             <Link
                                                 href={item.href}
@@ -101,7 +109,7 @@ export function Navbar({ config }: NavbarProps) {
                                                 )}
                                             >
                                                 {item.name}
-                                                <ChevronDown className="ml-1 h-4 w-4" />
+                                                <ChevronDown className="ml-1 h-4 w-4 transition-transform duration-200 group-hover:rotate-180" />
                                                 {isActive && (
                                                     <motion.div
                                                         layoutId="navbar-indicator"
@@ -111,27 +119,24 @@ export function Navbar({ config }: NavbarProps) {
                                                 )}
                                             </Link>
 
-                                            {hoveredItem === item.name && (
-                                                <div className="absolute left-0 top-full -mt-1 w-64 bg-white dark:bg-gray-900 shadow-2xl rounded-b-2xl z-50 animate-in fade-in slide-in-from-top-3 duration-300 border border-gray-100 dark:border-gray-800">
-                                                    <div className="py-2">
-                                                        {item.children.map((child) => (
-                                                            <Link
-                                                                key={child.href}
-                                                                href={child.href}
-                                                                className={cn(
-                                                                    "block px-4 py-3 text-sm font-medium transition-colors",
-                                                                    pathname === child.href
-                                                                        ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 font-bold"
-                                                                        : "text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-gray-800 hover:text-indigo-600 dark:hover:text-indigo-400"
-                                                                )}
-                                                                onClick={() => setHoveredItem(null)}
-                                                            >
-                                                                {child.name}
-                                                            </Link>
-                                                        ))}
-                                                    </div>
+                                            <div className="absolute left-0 top-full -mt-1 w-64 pt-2 invisible opacity-0 translate-y-2 group-hover:visible group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 z-50">
+                                                <div className="bg-white dark:bg-gray-900 shadow-2xl rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 p-2">
+                                                    {item.children.map((child) => (
+                                                        <Link
+                                                            key={child.href}
+                                                            href={child.href}
+                                                            className={cn(
+                                                                "block px-4 py-3 rounded-xl text-sm font-medium transition-colors",
+                                                                pathname === child.href
+                                                                    ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 font-bold"
+                                                                    : "text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-gray-800 hover:text-indigo-600 dark:hover:text-indigo-400"
+                                                            )}
+                                                        >
+                                                            {child.name}
+                                                        </Link>
+                                                    ))}
                                                 </div>
-                                            )}
+                                            </div>
                                         </div>
                                     );
                                 }
