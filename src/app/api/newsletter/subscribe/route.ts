@@ -72,6 +72,9 @@ export async function POST(req: Request) {
 
     } catch (error) {
         console.error("Newsletter error:", error);
-        return NextResponse.json({ error: "Wystąpił błąd serwera" }, { status: 500 });
+        return NextResponse.json(
+            { error: "Wystąpił błąd serwera", details: error instanceof Error ? error.message : "Błąd nieznany" },
+            { status: 500 }
+        );
     }
 }

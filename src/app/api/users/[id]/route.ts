@@ -50,13 +50,18 @@ export async function PUT(req: Request, props: { params: Promise<{ id: string }>
         // Exclude password
         const { password, ...result } = updatedUser;
         return NextResponse.json(result);
-    } catch (error: any) {
+    } catch (error) {
         console.error("User update error:", error);
-        if (error.code === 'P2002') {
-            // Basic generic error for uniqueness if we missed checks
-            const target = error.meta?.target;
+
+        if (error && typeof error === 'object' && 'code' in error && error.code === 'P2002') {
+            const meta = (error as any).meta;
+            const target = meta?.target;
             return NextResponse.json({ error: `Wartość pola ${target} jest już zajęta.` }, { status: 400 });
         }
-        return NextResponse.json({ error: "Błąd aktualizacji: " + error.message }, { status: 500 });
+
+        return NextResponse.json(
+            { error: "Błąd aktualizacji", details: error instanceof Error ? error.message : "Błąd nieznany" },
+            { status: 500 }
+        );
     }
 }

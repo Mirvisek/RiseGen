@@ -127,6 +127,9 @@ export async function POST(req: Request) {
 
     } catch (error) {
         console.error("Drip error:", error);
-        return NextResponse.json({ error: "Server Error" }, { status: 500 });
+        return NextResponse.json(
+            { error: "Server Error", details: error instanceof Error ? error.message : "Unknown error" },
+            { status: 500 }
+        );
     }
 }

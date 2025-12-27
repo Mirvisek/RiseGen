@@ -45,8 +45,11 @@ export async function POST(req: Request) {
 
         const { password, ...result } = user;
         return NextResponse.json(result);
-    } catch (error: any) {
+    } catch (error) {
         console.error("User creation error:", error);
-        return NextResponse.json({ error: "Błąd serwera: " + error.message }, { status: 500 });
+        return NextResponse.json(
+            { error: "Błąd serwera", details: error instanceof Error ? error.message : "Błąd nieznany" },
+            { status: 500 }
+        );
     }
 }

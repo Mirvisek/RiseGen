@@ -47,12 +47,12 @@ export async function POST(request: Request) {
             timestamp: new Date(),
             path: backupPath
         });
-    } catch (error: any) {
+    } catch (error) {
         console.error('Backup error:', error);
         return NextResponse.json(
             {
                 error: 'Backup failed',
-                details: error?.message || 'Unknown error'
+                details: error instanceof Error ? error.message : 'Unknown error'
             },
             { status: 500 }
         );
