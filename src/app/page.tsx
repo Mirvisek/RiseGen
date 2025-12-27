@@ -73,14 +73,14 @@ export default async function Home() {
                   <Rocket size={400} fill="currentColor" />
                 </div>
                 <div className="container mx-auto px-4 relative z-10 text-center max-w-3xl">
-                  <span className="inline-block py-1 px-3 rounded-full bg-indigo-500/30 border border-indigo-400/30 text-indigo-100 text-sm font-medium mb-6 backdrop-blur-sm animate-in fade-in slide-in-from-bottom-4 duration-700 shadow-lg">
+                  <span className="inline-block py-1 px-3 rounded-full bg-indigo-500/30 border border-indigo-400/30 text-indigo-100 text-sm font-medium mb-6 backdrop-blur-sm animate-in fade-in duration-700 shadow-lg">
                     Witaj w RiseGen
                   </span>
-                  <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100 drop-shadow-xl">
+                  <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight animate-in fade-in duration-700 delay-100 drop-shadow-xl">
                     Twoja przestrzeń <br />
                     <span className="text-indigo-200">do działania</span>
                   </h1>
-                  <p className="text-xl text-indigo-100 mb-10 leading-relaxed font-light animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200 drop-shadow-md">
+                  <p className="text-xl text-indigo-100 mb-10 leading-relaxed font-light animate-in fade-in duration-700 delay-200 drop-shadow-md">
                     Budujemy społeczność młodych ludzi z regionu, łącząc pokolenia, wspierając rozwój i realizując ambitne projekty.
                   </p>
                   <div className="pt-4 animate-in fade-in zoom-in-95 duration-1000 delay-300">
@@ -102,7 +102,7 @@ export default async function Home() {
         return showActionCenter && <ActionCenter key="action" />;
       case "news":
         return showNews && (
-          <section key="news" className="container mx-auto px-4 max-w-6xl py-8 animate-in fade-in slide-in-from-bottom-10 duration-700">
+          <section key="news" className="container mx-auto px-4 max-w-6xl py-8 animate-in fade-in duration-700">
             <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-8 md:p-12 space-y-12">
               <div className="text-center space-y-4">
                 <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Aktualności</h2>
@@ -162,7 +162,7 @@ export default async function Home() {
         );
       case "events":
         return showUpcomingEvents && (
-          <section key="events" className="container mx-auto px-4 max-w-6xl py-8 animate-in fade-in slide-in-from-bottom-10 duration-700 delay-100">
+          <section key="events" className="container mx-auto px-4 max-w-6xl py-8 animate-in fade-in duration-700 delay-100">
             <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-8 md:p-12 space-y-12">
               <div className="text-center space-y-4">
                 <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Nadchodzące Wydarzenia</h2>
@@ -224,7 +224,7 @@ export default async function Home() {
         );
       case "projects":
         return showProjects && (
-          <section key="projects" className="container mx-auto px-4 max-w-6xl py-8 animate-in fade-in slide-in-from-bottom-10 duration-700 delay-100">
+          <section key="projects" className="container mx-auto px-4 max-w-6xl py-8 animate-in fade-in duration-700 delay-100">
             <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-800 p-8 md:p-12 space-y-12">
               <div className="text-center space-y-4">
                 <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Nasze Projekty</h2>

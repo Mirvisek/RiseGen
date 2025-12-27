@@ -56,7 +56,7 @@ export default function Footer({ config }: FooterProps) {
 
                 {/* Newsletter Section - Moved to Top */}
                 {config?.enableNewsletter && (
-                    <div className="border-b border-gray-200 dark:border-gray-800 mb-12 pb-12 flex justify-center">
+                    <div className="border-b border-gray-200 dark:border-gray-800 mb-12 pb-12 flex justify-center min-h-[400px]">
                         <div className="w-full max-w-lg">
                             <NewsletterForm variant="footer" />
                         </div>
@@ -67,7 +67,7 @@ export default function Footer({ config }: FooterProps) {
 
                     {/* LEFT: Copyright */}
                     <div className="text-sm text-gray-500 dark:text-gray-400 order-3 md:order-1 whitespace-nowrap">
-                        &copy; {new Date().getFullYear()} Stowarzyszenie RiseGen
+                        &copy; 2025 Stowarzyszenie RiseGen
                     </div>
 
                     {/* CENTER: Organization Details */}
