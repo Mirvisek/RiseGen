@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
-// import { Inter } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-poppins",
+});
 import { Navbar } from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { HideInAdmin } from "@/components/layout/HideInAdmin";
@@ -149,7 +155,7 @@ export default async function RootLayout({
       </head>
       <body
         suppressHydrationWarning
-        className={`font-sans antialiased min-h-screen flex flex-col bg-white text-gray-900 transition-colors duration-300 dark:bg-gray-950 dark:text-gray-50`}
+        className={`${poppins.variable} font-sans antialiased min-h-screen flex flex-col bg-white text-gray-900 transition-colors duration-300 dark:bg-gray-950 dark:text-gray-50`}
       >
         <ThemeProvider>
           <VisitTracker />
