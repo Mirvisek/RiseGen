@@ -53,23 +53,65 @@ const authMiddleware = withAuth(
 );
 
 export default async function middleware(req: NextRequest, event: any) {
+    if (process.env.NODE_ENV === "production") {
+        const forwardedProto = req.headers.get("x-forwarded-proto");
+        if (forwardedProto === "http") {
+            const newUrl = req.nextUrl.clone();
+            newUrl.protocol = "https:";
+            return NextResponse.redirect(newUrl, 301);
+        }
+    }
+
     const pathname = req.nextUrl.pathname;
 
-    // 1. Prepare headers with x-pathname
+    // Define CSP
+    // Note: 'unsafe-inline' and 'unsafe-eval' are currently enabled to support existing functionality 
+    // (Next.js client-side hydration, admin code injection, etc.).
+    // Ideally, we should move to nonces in the future for stricter security.
+    const cspHeader = `
+        default-src 'self';
+        script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ https://www.googletagmanager.com https://www.google-analytics.com;
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+        img-src 'self' blob: data: https:;
+        font-src 'self' https://fonts.gstatic.com data:;
+        connect-src 'self' https://www.google.com/recaptcha/ https://recaptchaenterprise.googleapis.com https://www.google-analytics.com https://www.googletagmanager.com;
+        frame-src 'self' https://www.google.com/recaptcha/ https://recaptcha.google.com/;
+        object-src 'none';
+        base-uri 'self';
+        form-action 'self';
+        frame-ancestors 'self';
+        require-trusted-types-for 'script';
+        ${process.env.NODE_ENV === 'production' ? 'upgrade-insecure-requests;' : ''}
+    `.replace(/\s{2,}/g, ' ').trim();
+
+    // 1. Prepare headers with x-pathname and CSP
     const requestHeaders = new Headers(req.headers);
     requestHeaders.set("x-pathname", pathname);
+    requestHeaders.set("Content-Security-Policy", cspHeader);
 
     // 2. Handle Admin & Auth pages
     if (pathname.startsWith("/admin") || pathname.startsWith("/auth") || pathname.startsWith("/api/auth")) {
-        return (authMiddleware as any)(req, event);
+        const response = await (authMiddleware as any)(req, event);
+        if (response) {
+            response.headers.set("Content-Security-Policy", cspHeader);
+            response.headers.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload");
+            response.headers.set("X-Frame-Options", "SAMEORIGIN");
+        }
+        return response;
     }
 
     // 3. For all other pages, return next with modified headers
-    return NextResponse.next({
+    const response = NextResponse.next({
         request: {
             headers: requestHeaders,
         },
     });
+
+    response.headers.set("Content-Security-Policy", cspHeader);
+    response.headers.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload");
+    response.headers.set("X-Frame-Options", "SAMEORIGIN");
+
+    return response;
 }
 
 export const config = {

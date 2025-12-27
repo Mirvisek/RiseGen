@@ -20,7 +20,7 @@ export function ThemeToggle() {
 
     if (!mounted) {
         return (
-            <button className="p-2 rounded-full text-gray-400 opacity-50 cursor-default">
+            <button className="p-2 rounded-full text-gray-400 opacity-50 cursor-default" aria-label="Ładowanie motywu">
                 <Sun className="h-5 w-5" />
             </button>
         );

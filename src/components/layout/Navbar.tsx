@@ -202,6 +202,7 @@ export function Navbar({ config }: NavbarProps) {
                             <button
                                 onClick={() => setIsSearchOpen(true)}
                                 className="inline-flex items-center justify-center rounded-lg p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+                                aria-label="Szukaj"
                             >
                                 <Search className="h-6 w-6" />
                             </button>
@@ -210,7 +211,7 @@ export function Navbar({ config }: NavbarProps) {
                                 onClick={() => setIsOpen(!isOpen)}
                                 className="inline-flex items-center justify-center rounded-lg p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
                             >
-                                <span className="sr-only">Open main menu</span>
+                                <span className="sr-only">Otwórz menu</span>
                                 {isOpen ? (
                                     <X className="block h-6 w-6" aria-hidden="true" />
                                 ) : (
