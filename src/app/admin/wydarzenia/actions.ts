@@ -1,4 +1,5 @@
 "use server";
+import { PrevActionState } from "@/types/actions";
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
@@ -12,8 +13,9 @@ async function checkAuth() {
     return session;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function upsertEvent(id: string | null, data: any) {
-    const session = await checkAuth();
+    const _session = await checkAuth();
 
     // Generate slug if not provided
     if (!data.slug) {
@@ -47,7 +49,7 @@ export async function upsertEvent(id: string | null, data: any) {
 }
 
 export async function deleteEvent(id: string) {
-    const session = await checkAuth();
+    const _session = await checkAuth();
     const before = await prisma.event.findUnique({ where: { id } });
     await prisma.event.delete({ where: { id } });
     await logAction({

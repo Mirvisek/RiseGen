@@ -1,4 +1,5 @@
 "use server";
+import { PrevActionState } from "@/types/actions";
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
@@ -30,8 +31,8 @@ export async function updateApplicationStatus(id: string, newStatus: string) {
         revalidatePath("/admin/zgloszenia");
         revalidatePath(`/admin/zgloszenia/${id}`); // Revalidate details page too
         return { success: true };
-    } catch (error) {
-        console.error("Failed to update status:", error);
+    } catch (_error) {
+        console.error("Failed to update status:", _error);
         return { success: false, error: "Failed to update" };
     }
 }
@@ -67,8 +68,8 @@ export async function deleteApplication(id: string, reason: string) {
         revalidatePath("/admin/zgloszenia");
         revalidatePath(`/admin/zgloszenia/${id}`);
         return { success: true };
-    } catch (error) {
-        console.error("Failed to delete application:", error);
+    } catch (_error) {
+        console.error("Failed to delete application:", _error);
         return { success: false, error: "Failed to delete" };
     }
 }
@@ -103,8 +104,8 @@ export async function deleteApplicationPermanently(id: string) {
 
         revalidatePath("/admin/zgloszenia");
         return { success: true };
-    } catch (error) {
-        console.error("Failed to permanently delete application:", error);
+    } catch (_error) {
+        console.error("Failed to permanently delete application:", _error);
         return { success: false, error: "Failed to delete permanently" };
     }
 }

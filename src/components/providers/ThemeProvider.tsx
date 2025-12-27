@@ -29,15 +29,15 @@ export function ThemeProvider({
     defaultTheme = "system",
     storageKey = "risegen-ui-theme",
 }: ThemeProviderProps) {
-    const [theme, setTheme] = useState<Theme>(defaultTheme);
-    const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark" | undefined>(undefined);
-
-    useEffect(() => {
-        const savedTheme = localStorage.getItem(storageKey) as Theme | null;
-        if (savedTheme) {
-            setTheme(savedTheme);
+    // Initialize theme from localStorage
+    const [theme, setTheme] = useState<Theme>(() => {
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem(storageKey) as Theme | null;
+            return saved || defaultTheme;
         }
-    }, [storageKey]);
+        return defaultTheme;
+    });
+    const [resolvedTheme, setResolvedTheme] = useState<"light" | "dark" | undefined>(undefined);
 
     useEffect(() => {
         const root = window.document.documentElement;

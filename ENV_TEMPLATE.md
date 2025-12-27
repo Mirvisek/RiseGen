@@ -51,6 +51,18 @@ RECAPTCHA_SECRET_KEY="6Le..."
 # ID Google Analytics (jeśli używasz)
 # NEXT_PUBLIC_GA_ID="G-XXXXXXXXXX"
 
+# ----------------
+# 6. SENTRY (Monitoring błędów)
+# ----------------
+# ID Twojego projektu w Sentry
+NEXT_PUBLIC_SENTRY_DSN="https://..."
+
+# ----------------
+# 7. CRON (Zadania automatyczne)
+# ----------------
+# Sekretny token do wyzwalania zadania backupu /api/cron/backup?token=...
+CRON_SECRET="silny-sekret-do-cron"
+
 
 # ================================
 # INSTRUKCJE:

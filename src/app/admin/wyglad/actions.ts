@@ -1,5 +1,7 @@
 "use server";
 
+import { PrevActionState } from "@/types/actions";
+
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { getServerSession } from "next-auth";
@@ -13,7 +15,7 @@ function checkPermission(session: any) {
     return session?.user?.roles && Array.isArray(session.user.roles) && session.user.roles.includes("SUPERADMIN");
 }
 
-export async function updateCompanyData(prevState: any, formData: FormData) {
+export async function updateCompanyData(_prevState: PrevActionState, formData: FormData) {
     const session = await getServerSession(authOptions);
     if (!checkPermission(session)) return { success: false, message: "Brak uprawnień." };
 
@@ -38,13 +40,13 @@ export async function updateCompanyData(prevState: any, formData: FormData) {
         revalidatePath("/");
         revalidatePath("/admin/wyglad");
         return { success: true, message: "Dane firmowe zaktualizowane." };
-    } catch (error) {
-        console.error("Failed to update company data:", error);
-        return { success: false, message: error instanceof Error ? error.message : "Wystąpił błąd." };
+    } catch (_error) {
+        console.error("Failed to update company data:", _error);
+        return { success: false, message: _error instanceof Error ? _error.message : "Wystąpił błąd." };
     }
 }
 
-export async function updateSocialMedia(prevState: any, formData: FormData) {
+export async function updateSocialMedia(_prevState: PrevActionState, formData: FormData) {
     const session = await getServerSession(authOptions);
     if (!checkPermission(session)) return { success: false, message: "Brak uprawnień." };
 
@@ -63,13 +65,13 @@ export async function updateSocialMedia(prevState: any, formData: FormData) {
         revalidatePath("/");
         revalidatePath("/admin/wyglad");
         return { success: true, message: "Media społecznościowe zaktualizowane." };
-    } catch (error) {
-        console.error("Failed to update social media:", error);
-        return { success: false, message: error instanceof Error ? error.message : "Wystąpił błąd." };
+    } catch (_error) {
+        console.error("Failed to update social media:", _error);
+        return { success: false, message: _error instanceof Error ? _error.message : "Wystąpił błąd." };
     }
 }
 
-export async function updateContactData(prevState: any, formData: FormData) {
+export async function updateContactData(_prevState: PrevActionState, formData: FormData) {
     const session = await getServerSession(authOptions);
     if (!checkPermission(session)) return { success: false, message: "Brak uprawnień." };
 
@@ -89,13 +91,13 @@ export async function updateContactData(prevState: any, formData: FormData) {
         revalidatePath("/");
         revalidatePath("/admin/wyglad");
         return { success: true, message: "Dane kontaktowe zaktualizowane." };
-    } catch (error) {
-        console.error("Failed to update contact data:", error);
-        return { success: false, message: error instanceof Error ? error.message : "Wystąpił błąd." };
+    } catch (_error) {
+        console.error("Failed to update contact data:", _error);
+        return { success: false, message: _error instanceof Error ? _error.message : "Wystąpił błąd." };
     }
 }
 
-export async function updateHomepageSettings(prevState: any, formData: FormData) {
+export async function updateHomepageSettings(_prevState: PrevActionState, formData: FormData) {
     const session = await getServerSession(authOptions);
     if (!checkPermission(session)) return { success: false, message: "Brak uprawnień." };
 
@@ -119,13 +121,13 @@ export async function updateHomepageSettings(prevState: any, formData: FormData)
         revalidatePath("/");
         revalidatePath("/admin/wyglad");
         return { success: true, message: "Ustawienia strony głównej zaktualizowane." };
-    } catch (error) {
-        console.error(error);
+    } catch (_error) {
+        console.error(_error);
         return { success: false, message: "Błąd aktualizacji ustawień." };
     }
 }
 
-export async function updateSupportPageOrder(prevState: any, formData: FormData) {
+export async function updateSupportPageOrder(_prevState: PrevActionState, formData: FormData) {
     const session = await getServerSession(authOptions);
     if (!checkPermission(session)) return { success: false, message: "Brak uprawnień." };
 
@@ -142,13 +144,13 @@ export async function updateSupportPageOrder(prevState: any, formData: FormData)
         revalidatePath("/wesprzyj-nas");
         revalidatePath("/admin/wyglad");
         return { success: true, message: "Układ strony Wesprzyj Nas zaktualizowany." };
-    } catch (error) {
-        console.error("Failed to update support page order:", error);
+    } catch (_error) {
+        console.error("Failed to update support page order:", _error);
         return { success: false, message: "Błąd aktualizacji układu." };
     }
 }
 
-export async function updateHeroConfig(prevState: any, formData: FormData) {
+export async function updateHeroConfig(_prevState: PrevActionState, formData: FormData) {
     try {
         const session = await getServerSession(authOptions);
         if (!checkPermission(session)) return { success: false, message: "Brak uprawnień." };
@@ -169,13 +171,13 @@ export async function updateHeroConfig(prevState: any, formData: FormData) {
         revalidatePath("/");
         revalidatePath("/admin/wyglad");
         return { success: true, message: "Konfiguracja banera zaktualizowana." };
-    } catch (error) {
-        console.error("Failed to update hero config:", error);
-        return { success: false, message: error instanceof Error ? error.message : "Błąd aktualizacji banera." };
+    } catch (_error) {
+        console.error("Failed to update hero config:", _error);
+        return { success: false, message: _error instanceof Error ? _error.message : "Błąd aktualizacji banera." };
     }
 }
 
-export async function updateBranding(prevState: any, formData: FormData) {
+export async function updateBranding(_prevState: PrevActionState, formData: FormData) {
     const session = await getServerSession(authOptions);
     if (!checkPermission(session)) return { success: false, message: "Brak uprawnień." };
 
@@ -192,13 +194,13 @@ export async function updateBranding(prevState: any, formData: FormData) {
         revalidatePath("/");
         revalidatePath("/admin/wyglad");
         return { success: true, message: "Branding zaktualizowany." };
-    } catch (error) {
-        console.error("Failed to update branding:", error);
+    } catch (_error) {
+        console.error("Failed to update branding:", _error);
         return { success: false, message: "Błąd aktualizacji brandingu." };
     }
 }
 
-export async function updateSeoConfig(prevState: any, formData: FormData) {
+export async function updateSeoConfig(_prevState: PrevActionState, formData: FormData) {
     const session = await getServerSession(authOptions);
     if (!checkPermission(session)) return { success: false, message: "Brak uprawnień." };
 
@@ -245,8 +247,8 @@ export async function updateSeoConfig(prevState: any, formData: FormData) {
                 // 4. Force DB value to /favicon.ico
                 faviconUrl = "/favicon.ico";
 
-            } catch (err) {
-                console.error("Failed to process favicon:", err);
+            } catch (_err) {
+                console.error("Failed to process favicon:", _err);
                 return { success: false, message: "Błąd podczas przetwarzania ikony (konwersja/kopiowanie nie powiodło się)." };
             }
         }
@@ -261,12 +263,12 @@ export async function updateSeoConfig(prevState: any, formData: FormData) {
         revalidatePath("/admin/wyglad");
         revalidatePath("/deklaracja-dostepnosci");
         return { success: true, message: "SEO i Favicon zaktualizowane pomyślnie." };
-    } catch (error) {
+    } catch (_error) {
         return { success: false, message: "Błąd zapisu w bazie danych." };
     }
 }
 
-export async function updateNavigation(prevState: any, formData: FormData) {
+export async function updateNavigation(_prevState: PrevActionState, formData: FormData) {
     const session = await getServerSession(authOptions);
     if (!checkPermission(session)) return { success: false, message: "Brak uprawnień." };
 
@@ -282,14 +284,14 @@ export async function updateNavigation(prevState: any, formData: FormData) {
         revalidatePath("/");
         revalidatePath("/admin/wyglad");
         return { success: true, message: "Menu nawigacji zaktualizowane." };
-    } catch (error) {
-        console.error("Failed to update navigation:", error);
+    } catch (_error) {
+        console.error("Failed to update navigation:", _error);
         return { success: false, message: "Błąd aktualizacji nawigacji." };
     }
 }
 
 
-export async function updateEmailConfig(prevState: any, formData: FormData) {
+export async function updateEmailConfig(_prevState: PrevActionState, formData: FormData) {
     const session = await getServerSession(authOptions);
     if (!checkPermission(session)) return { success: false, message: "Brak uprawnień." };
     // This function had 'void' return in catch, inconsistent with others, but let's keep it robust.
@@ -342,8 +344,8 @@ export async function updateEmailConfig(prevState: any, formData: FormData) {
         revalidatePath("/");
         revalidatePath("/admin/wyglad");
         return { success: true, message: "Konfiguracja email zaktualizowana." };
-    } catch (error) {
-        console.error("Failed to update email config:", error);
+    } catch (_error) {
+        console.error("Failed to update email config:", _error);
         return { success: false, message: "Błąd aktualizacji email." };
     }
 }
@@ -369,7 +371,7 @@ const UpdateCodeInjectionSchema = z.object({
     enableDonations: z.boolean().optional(),
 });
 
-export async function updateCodeInjection(prevState: any, formData: FormData) {
+export async function updateCodeInjection(_prevState: PrevActionState, formData: FormData) {
     const session = await getServerSession(authOptions);
     if (!checkPermission(session)) return { success: false, message: "Brak uprawnień." };
 
@@ -433,13 +435,13 @@ export async function updateCodeInjection(prevState: any, formData: FormData) {
         revalidatePath("/", "layout");
         revalidatePath("/admin/wyglad");
         return { success: true, message: "Konfiguracja integracji zaktualizowana." };
-    } catch (error) {
-        console.error("Failed to update integration config:", error);
-        return { success: false, message: error instanceof Error ? error.message : "Błąd aktualizacji konfiguracji." };
+    } catch (_error) {
+        console.error("Failed to update integration config:", _error);
+        return { success: false, message: _error instanceof Error ? _error.message : "Błąd aktualizacji konfiguracji." };
     }
 }
 
-export async function updatePrivacyPolicy(prevState: any, formData: FormData) {
+export async function updatePrivacyPolicy(_prevState: PrevActionState, formData: FormData) {
     const session = await getServerSession(authOptions);
     if (!checkPermission(session)) return { success: false, message: "Brak uprawnień." };
 
@@ -456,13 +458,13 @@ export async function updatePrivacyPolicy(prevState: any, formData: FormData) {
         revalidatePath("/admin/wyglad");
         revalidatePath("/polityka-prywatnosci");
         return { success: true, message: "Polityka prywatności zaktualizowana pomyślnie." };
-    } catch (error) {
-        console.error("Failed to update privacy policy:", error);
-        return { success: false, message: error instanceof Error ? error.message : "Błąd aktualizacji polityki prywatności." };
+    } catch (_error) {
+        console.error("Failed to update privacy policy:", _error);
+        return { success: false, message: _error instanceof Error ? _error.message : "Błąd aktualizacji polityki prywatności." };
     }
 }
 
-export async function updateCookiePolicy(prevState: any, formData: FormData) {
+export async function updateCookiePolicy(_prevState: PrevActionState, formData: FormData) {
     const session = await getServerSession(authOptions);
     if (!checkPermission(session)) return { success: false, message: "Brak uprawnień." };
 
@@ -479,13 +481,13 @@ export async function updateCookiePolicy(prevState: any, formData: FormData) {
         revalidatePath("/admin/wyglad");
         revalidatePath("/polityka-cookies");
         return { success: true, message: "Polityka cookies zaktualizowana pomyślnie." };
-    } catch (error) {
-        console.error("Failed to update cookie policy:", error);
-        return { success: false, message: error instanceof Error ? error.message : "Błąd aktualizacji polityki cookies." };
+    } catch (_error) {
+        console.error("Failed to update cookie policy:", _error);
+        return { success: false, message: _error instanceof Error ? _error.message : "Błąd aktualizacji polityki cookies." };
     }
 }
 
-export async function updateMaintenanceMode(prevState: any, formData: FormData) {
+export async function updateMaintenanceMode(_prevState: PrevActionState, formData: FormData) {
     const session = await getServerSession(authOptions);
     if (!checkPermission(session)) return { success: false, message: "Brak uprawnień." };
 
@@ -502,13 +504,13 @@ export async function updateMaintenanceMode(prevState: any, formData: FormData) 
         revalidatePath("/", "layout");
         revalidatePath("/admin/wyglad");
         return { success: true, message: `Tryb serwisowy ${isMaintenanceMode ? "włączony" : "wyłączony"}.` };
-    } catch (error) {
-        console.error("Failed to update maintenance mode:", error);
+    } catch (_error) {
+        console.error("Failed to update maintenance mode:", _error);
         return { success: false, message: "Błąd aktualizacji trybu serwisowego." };
     }
 }
 
-export async function updateAccessibilityDeclaration(prevState: any, formData: FormData) {
+export async function updateAccessibilityDeclaration(_prevState: PrevActionState, formData: FormData) {
     const session = await getServerSession(authOptions);
     if (!checkPermission(session)) return { success: false, message: "Brak uprawnień." };
 
@@ -525,13 +527,13 @@ export async function updateAccessibilityDeclaration(prevState: any, formData: F
         revalidatePath("/deklaracja-dostepnosci");
         revalidatePath("/admin/wyglad");
         return { success: true, message: "Deklaracja dostępności zaktualizowana." };
-    } catch (error) {
-        console.error("Failed to update accessibility declaration:", error);
+    } catch (_error) {
+        console.error("Failed to update accessibility declaration:", _error);
         return { success: false, message: "Błąd zapisu w bazie danych." };
     }
 }
 
-export async function updateNewsletterSettings(prevState: any, formData: FormData) {
+export async function updateNewsletterSettings(_prevState: PrevActionState, formData: FormData) {
     const session = await getServerSession(authOptions);
     if (!checkPermission(session)) return { success: false, message: "Brak uprawnień." };
 
@@ -585,8 +587,8 @@ export async function updateNewsletterSettings(prevState: any, formData: FormDat
         revalidatePath("/");
         revalidatePath("/admin/wyglad");
         return { success: true, message: "Ustawienia newslettera i kampanii Drip zaktualizowane." };
-    } catch (error) {
-        console.error("Failed to update newsletter settings:", error);
+    } catch (_error) {
+        console.error("Failed to update newsletter settings:", _error);
         return { success: false, message: "Błąd aktualizacji ustawień newslettera." };
     }
 }

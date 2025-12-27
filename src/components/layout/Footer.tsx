@@ -25,7 +25,9 @@ interface FooterProps {
 
 function PhoneNumber({ phone }: { phone: string }) {
     const [mounted, setMounted] = useState(false);
-    useEffect(() => setMounted(true), []);
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     if (!mounted) {
         return <span>{phone}</span>;
@@ -180,7 +182,7 @@ export default function Footer({ config }: FooterProps) {
                     {config?.footerDocuments && (() => {
                         try {
                             const docs = JSON.parse(config.footerDocuments);
-                            return Array.isArray(docs) ? docs.map((doc: any, i: number) => (
+                            return Array.isArray(docs) ? docs.map((doc: { name: string; url: string }, i: number) => (
                                 <a
                                     key={i}
                                     href={doc.url}
@@ -191,7 +193,7 @@ export default function Footer({ config }: FooterProps) {
                                     {doc.name}
                                 </a>
                             )) : null;
-                        } catch (e) {
+                        } catch {
                             return null;
                         }
                     })()}

@@ -9,7 +9,7 @@ interface LogActionParams {
     action: ActionType;
     entityType: EntityType;
     entityId: string;
-    details: Record<string, any>;
+    details: Record<string, unknown>;
 }
 
 export async function logAction(params: LogActionParams) {

@@ -1,4 +1,5 @@
 "use server";
+import { PrevActionState } from "@/types/actions";
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
@@ -19,8 +20,8 @@ export async function deleteProject(formData: FormData) {
 
                 for (const img of images) await deleteFile(img);
                 for (const doc of documents) await deleteFile(doc.url);
-            } catch (e) {
-                console.error("Error cleaning up project files:", e);
+            } catch (_e) {
+                0
             }
 
             await prisma.project.delete({ where: { id } });

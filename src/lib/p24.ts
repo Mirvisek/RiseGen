@@ -46,9 +46,8 @@ export class P24 {
             : "https://secure.przelewy24.pl";
     }
 
-    private calculateSign(payload: Record<string, any>, fields: string[]): string {
-        const jsonString = fields.map(field => payload[field]).join("|");
-        // console.log("Sign string:", `{"sessionId":"${payload.sessionId}",...}`); // Debugging locally only
+    private calculateSign(payload: Record<string, string | number>, fields: string[]): string {
+        // Unused - specific sign methods are implemented per endpoint
         // Standard Sign calculation is SHA-384 of specific fields + CRC
         // But for /transaction/register, it's defined as {"sessionId":..., "merchantId":..., "amount":..., "currency":..., "crc":...}
         // Let's implement specific sign logic per method as needed.
@@ -68,9 +67,11 @@ export class P24 {
      * Test Connection
      */
     public async testConnection(): Promise<boolean> {
-        const sign = crypto.createHash("sha384")
-            .update(`{"merchantId":${this.config.merchantId},"posId":${this.config.posId},"crc":"${this.config.crc}"}`)
-            .digest("hex");
+        // Sign not needed for testAccess endpoint
+        // Kept for future reference if needed
+        // const sign = crypto.createHash("sha384")
+        //     .update(`{"merchantId":${this.config.merchantId},"posId":${this.config.posId},"crc":"${this.config.crc}"}`)
+        //     .digest("hex");
 
         try {
             const res = await fetch(`${this.baseUrl}/api/v1/testAccess`, {
@@ -147,7 +148,7 @@ export class P24 {
      * NO. P24 documentation says:
      * sign = SHA384({"merchantId":..., "posId":..., "sessionId":..., "amount":..., "originAmount":..., "currency":..., "orderId":..., "methodId":..., "statement":..., "crc":...})
      */
-    public verifyNotificationSign(body: any): boolean {
+    public verifyNotificationSign(_body: Record<string, unknown>): boolean {
         // The body comes as parsed JSON usually.
         // We need to construct the string manually to match P24 algorithm.
         // Or cleaner: verify(transaction/verify) endpoint handles validation.

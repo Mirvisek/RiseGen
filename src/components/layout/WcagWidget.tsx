@@ -5,20 +5,29 @@ import { Accessibility, Type, Sun, Moon, Link as LinkIcon, X, Eye } from "lucide
 
 export function WcagWidget() {
     const [isOpen, setIsOpen] = useState(false);
-    const [fontSize, setFontSize] = useState<"normal" | "large" | "xlarge">("normal");
-    const [highContrast, setHighContrast] = useState(false);
-    const [underlineLinks, setUnderlineLinks] = useState(false);
 
-    // Load state from localStorage on mount
-    useEffect(() => {
-        const savedFontSize = localStorage.getItem("wcag-fontsize") as any;
-        const savedContrast = localStorage.getItem("wcag-contrast") === "true";
-        const savedLinks = localStorage.getItem("wcag-links") === "true";
+    // Initialize from localStorage
+    const [fontSize, setFontSize] = useState<"normal" | "large" | "xlarge">(() => {
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem("wcag-fontsize");
+            return (saved === "large" || saved === "xlarge") ? saved : "normal";
+        }
+        return "normal";
+    });
 
-        if (savedFontSize) setFontSize(savedFontSize);
-        if (savedContrast) setHighContrast(savedContrast);
-        if (savedLinks) setUnderlineLinks(savedLinks);
-    }, []);
+    const [highContrast, setHighContrast] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem("wcag-contrast") === "true";
+        }
+        return false;
+    });
+
+    const [underlineLinks, setUnderlineLinks] = useState(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem("wcag-links") === "true";
+        }
+        return false;
+    });
 
     // Apply classes to HTML element
     useEffect(() => {

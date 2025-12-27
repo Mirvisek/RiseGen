@@ -1,9 +1,9 @@
 import { prisma } from "@/lib/prisma";
-import { Mail, Calendar, Trash2 } from "lucide-react";
-import { deleteMessage } from "./actions";
+import { Mail, Calendar } from "lucide-react";
 import { DeleteMessageButton } from "@/components/admin/DeleteMessageButton";
 import { MessageStatusSelect } from "@/components/admin/MessageStatusSelect";
 import { SearchInput } from "@/components/admin/SearchInput";
+import { ExportMessagesButton } from "@/components/admin/ExportMessagesButton";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +25,7 @@ export default async function MessagesPage(props: { searchParams: Promise<{ q?: 
     const query = searchParams?.q || "";
     const statusFilter = searchParams?.status;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const where: any = {};
 
     // Status Filter
@@ -70,8 +71,10 @@ export default async function MessagesPage(props: { searchParams: Promise<{ q?: 
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Wiadomości Kontaktowe</h1>
 
-                {/* Search Bar - reusing the generic SearchInput component */}
-                <SearchInput placeholder="Szukaj (nr, email, treść)..." />
+                <div className="flex items-center gap-3">
+                    <ExportMessagesButton messages={messages} />
+                    <SearchInput placeholder="Szukaj (nr, email, treść)..." />
+                </div>
             </div>
 
             {/* Filters */}

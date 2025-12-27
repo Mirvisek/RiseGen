@@ -1,4 +1,5 @@
 "use server";
+import { PrevActionState } from "@/types/actions";
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
@@ -13,7 +14,7 @@ export async function updateMessageStatus(formData: FormData) {
         });
         revalidatePath("/admin/wiadomosci");
         return { success: true };
-    } catch (e) {
+    } catch (_e) {
         return { success: false };
     }
 }
@@ -24,7 +25,7 @@ export async function deleteMessage(formData: FormData) {
         await prisma.contactMessage.delete({ where: { id } });
         revalidatePath("/admin/wiadomosci");
         return { success: true };
-    } catch (e) {
+    } catch (_e) {
         return { success: false };
     }
 }

@@ -1,11 +1,12 @@
 "use server";
+import { PrevActionState } from "@/types/actions";
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { logAction } from "@/lib/audit";
 import { redirect } from "next/navigation";
 
-export async function createNews(prevState: any, formData: FormData) {
+export async function createNews(_prevState: PrevActionState, formData: FormData) {
     const title = formData.get("title") as string;
     const slug = formData.get("slug") as string;
     const content = formData.get("content") as string;
@@ -39,15 +40,15 @@ export async function createNews(prevState: any, formData: FormData) {
         revalidatePath("/aktualnosci");
         revalidatePath("/admin/aktualnosci");
         revalidatePath("/", "layout");
-    } catch (error) {
-        console.error("Failed to create news:", error);
+    } catch (_error) {
+        console.error("Failed to create news:", _error);
         return { success: false, message: "Błąd podczas tworzenia aktualności. Sprawdź czy slug jest unikalny." };
     }
 
     redirect("/admin/aktualnosci");
 }
 
-export async function updateNews(prevState: any, formData: FormData) {
+export async function updateNews(_prevState: PrevActionState, formData: FormData) {
     const id = formData.get("id") as string;
     const title = formData.get("title") as string;
     const slug = formData.get("slug") as string;
@@ -80,8 +81,8 @@ export async function updateNews(prevState: any, formData: FormData) {
                 const extractedNewUrls = newDocs.map(d => d.url);
                 const removedDocs = oldDocs.filter(d => !extractedNewUrls.includes(d.url));
                 for (const doc of removedDocs) await deleteFile(doc.url);
-            } catch (e) {
-                console.error("Error cleaning up news files:", e);
+            } catch (_e) {
+                console.error("Error cleaning up news files:", _e);
             }
         }
 
@@ -109,8 +110,8 @@ export async function updateNews(prevState: any, formData: FormData) {
         revalidatePath("/admin/aktualnosci");
         revalidatePath("/", "layout");
 
-    } catch (error) {
-        console.error("Failed to update news:", error);
+    } catch (_error) {
+        console.error("Failed to update news:", _error);
         return { success: false, message: "Błąd podczas aktualizacji." };
     }
 
@@ -131,8 +132,8 @@ export async function deleteNews(formData: FormData) {
 
                 for (const img of images) await deleteFile(img);
                 for (const doc of documents) await deleteFile(doc.url);
-            } catch (e) {
-                console.error("Error cleaning up global news files:", e);
+            } catch (_e) {
+                console.error("Error cleaning up global news files:", _e);
             }
 
             await prisma.news.delete({ where: { id } });

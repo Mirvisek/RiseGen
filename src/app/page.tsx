@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, Rocket } from "lucide-react";
 import dynamic from "next/dynamic";
 import { PartnersSection } from "@/components/sections/PartnersSection";
@@ -31,7 +32,6 @@ export default async function Home() {
   const showPartners = config?.showPartners ?? true;
   const showStats = config?.showStats ?? true;
   const showActionCenter = config?.showActionCenter ?? true;
-  // @ts-ignore
   const showUpcomingEvents = config?.showUpcomingEvents ?? true;
 
   const upcomingEvents = showUpcomingEvents ? await prisma.event.findMany({
@@ -80,7 +80,7 @@ export default async function Home() {
           </div>
         );
       case "stats":
-        return showStats && <ImpactCounter key="stats" stats={stats as any} />;
+        return showStats && <ImpactCounter key="stats" stats={stats} />;
       case "action":
         return showActionCenter && <ActionCenter key="action" />;
       case "news":
@@ -102,16 +102,18 @@ export default async function Home() {
                       if (Array.isArray(images) && images.length > 0) {
                         imageUrl = images[0];
                       }
-                    } catch (e) { }
+                    } catch { /* ignore parse errors */ }
 
                     return (
                       <div key={news.id} className="group bg-white dark:bg-gray-900 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-800 flex flex-col h-full transform hover:-translate-y-1">
                         <div className="h-56 bg-gray-200 dark:bg-gray-800 w-full relative">
                           {imageUrl ? (
-                            <img
+                            <Image
                               src={imageUrl}
                               alt={news.title}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                              fill
+                              className="object-cover group-hover:scale-110 transition-transform duration-700"
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500">Brak zdjęcia</div>
@@ -222,16 +224,18 @@ export default async function Home() {
                       if (Array.isArray(images) && images.length > 0) {
                         imageUrl = images[0];
                       }
-                    } catch (e) { }
+                    } catch { /* ignore parse errors */ }
 
                     return (
                       <div key={project.id} className="group bg-white dark:bg-gray-900 rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-800 flex flex-col h-full transform hover:-translate-y-1">
                         <div className="h-56 bg-gray-200 dark:bg-gray-800 w-full relative">
                           {imageUrl ? (
-                            <img
+                            <Image
                               src={imageUrl}
                               alt={project.title}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                              fill
+                              className="object-cover group-hover:scale-110 transition-transform duration-700"
+                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-500 font-medium">Projekt RiseGen</div>

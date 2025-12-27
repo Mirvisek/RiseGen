@@ -1,10 +1,11 @@
 "use server";
+import { PrevActionState } from "@/types/actions";
 
 import { prisma } from "@/lib/prisma";
 import { Resend } from "resend";
 import { revalidatePath } from "next/cache";
 
-export async function sendNewsletter(prevState: any, formData: FormData) {
+export async function sendNewsletter(_prevState: PrevActionState, formData: FormData) {
     try {
         const subject = formData.get("subject") as string;
         const content = formData.get("content") as string;
@@ -85,8 +86,8 @@ export async function sendNewsletter(prevState: any, formData: FormData) {
                     `,
                     });
                     successCount++;
-                } catch (e) {
-                    console.error(`Failed to email ${sub.email}`, e);
+                } catch (_e) {
+                    console.error(`Failed to email ${sub.email}`, _e);
                     failCount++;
                 }
             }));
@@ -97,8 +98,8 @@ export async function sendNewsletter(prevState: any, formData: FormData) {
             message: `Wysłano ${successCount} wiadomości. Błędy: ${failCount}.`
         };
 
-    } catch (e) {
-        console.error(e);
+    } catch (_e) {
+        console.error(_e);
         return { success: false, message: "Wystąpił błąd podczas wysyłania." };
     }
 }
@@ -108,7 +109,7 @@ export async function deleteSubscriber(email: string) {
         await prisma.subscriber.delete({ where: { email } });
         revalidatePath("/admin/newsletter");
         return { success: true };
-    } catch (e) {
+    } catch {
         return { success: false, message: "Błąd usuwania" };
     }
 }

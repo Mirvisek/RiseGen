@@ -7,7 +7,9 @@ import { createNews, updateNews } from "@/app/admin/aktualnosci/actions";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { AttachmentsManager, Attachment } from "@/components/admin/AttachmentsManager";
 
-export function NewsForm({ news }: { news?: any }) {
+import { News } from "@prisma/client";
+
+export function NewsForm({ news }: { news?: News }) {
     const initialState = { success: false, message: "" };
     // Using useActionState from React 19
     const [state, formAction, isPending] = useActionState(news ? updateNews : createNews, initialState);

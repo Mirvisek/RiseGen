@@ -1,6 +1,7 @@
 import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import type { NextFetchEvent } from "next/server";
 
 // Simple in-memory rate limiter
 const rateLimitMap = new Map<string, { count: number; lastReset: number }>();
@@ -33,8 +34,8 @@ setInterval(() => {
     });
 }, 300000);
 
-// Auth middleware function
 const authMiddleware = withAuth(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function middleware(req: any) {
         const token = req.nextauth.token;
         const isAuth = !!token;
@@ -83,8 +84,8 @@ const authMiddleware = withAuth(
     }
 );
 
-export default async function middleware(req: NextRequest, event: any) {
-    const ip = req.headers.get("x-forwarded-for") || (req as any).ip || "unknown";
+export default async function middleware(req: NextRequest, event: NextFetchEvent) {
+    const ip = req.headers.get("x-forwarded-for") || "unknown";
     const pathname = req.nextUrl.pathname;
 
     // --- Rate Limiting for API Routes ---
@@ -164,6 +165,7 @@ export default async function middleware(req: NextRequest, event: any) {
 
     // 2. Handle Admin & Auth pages
     if (pathname.startsWith("/admin") || pathname.startsWith("/auth") || pathname.startsWith("/api/auth")) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const response = await (authMiddleware as any)(req, event);
         if (response) {
             response.headers.set("Content-Security-Policy", cspHeader);

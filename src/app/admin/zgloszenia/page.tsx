@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { SearchInput } from "@/components/admin/SearchInput";
+import { ExportApplicationsButton } from "@/components/admin/ExportApplicationsButton";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
@@ -66,7 +67,10 @@ export default async function AdminApplications(props: { searchParams: Promise<{
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Zgłoszenia ({applications.length})</h1>
-                <SearchInput placeholder="Szukaj (nr, imię, email)..." />
+                <div className="flex items-center gap-3">
+                    <ExportApplicationsButton applications={applications} />
+                    <SearchInput placeholder="Szukaj (nr, imię, email)..." />
+                </div>
             </div>
 
             {/* Filters */}

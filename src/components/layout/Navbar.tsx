@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 
 import dynamic from "next/dynamic";
 
-const SearchModal = dynamic(() => import("./SearchModal").then(mod => mod.SearchModal), { ssr: false });
+const AdvancedSearchModal = dynamic(() => import("./AdvancedSearchModal").then(mod => mod.AdvancedSearchModal), { ssr: false });
 
 interface NavbarProps {
     config?: {
@@ -215,7 +215,7 @@ export function Navbar({ config }: NavbarProps) {
                                 <ThemeToggle />
                             </div>
                         </div>
-                        <SearchModal open={isSearchOpen} setOpen={setIsSearchOpen} />
+                        <AdvancedSearchModal open={isSearchOpen} setOpen={setIsSearchOpen} />
 
                         <div className="-mr-2 flex items-center gap-2 xl:hidden">
                             <button

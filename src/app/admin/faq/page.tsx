@@ -18,7 +18,7 @@ export default async function AdminFAQPage() {
                 <p className="font-bold text-gray-900 dark:text-white mb-2">Jak używać tej sekcji?</p>
                 <ul className="list-disc pl-5 space-y-1 text-sm text-gray-600 dark:text-gray-400">
                     <li>Dodawaj pytania, które najczęściej zadają Wasi członkowie lub partnerzy.</li>
-                    <li>Ustawiaj "Kolejność" (liczba), aby posortować pytania na stronie.</li>
+                    <li>Ustawiaj &quot;Kolejność&quot; (liczba), aby posortować pytania na stronie.</li>
                     <li>Odpowiedzi mogą być krótkie i treściwe – użytkownik zobaczy je po kliknięciu w pytanie.</li>
                 </ul>
             </div>

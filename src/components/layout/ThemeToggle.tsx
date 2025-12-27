@@ -8,6 +8,8 @@ export function ThemeToggle() {
 
     useEffect(() => {
         setMounted(true);
+        // Safe to use setState here as it's a one-time mount effect
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const toggleTheme = () => {

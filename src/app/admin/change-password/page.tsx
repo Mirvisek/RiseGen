@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
 export default function ChangePasswordPage() {
-    const router = useRouter();
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -35,7 +33,7 @@ export default function ChangePasswordPage() {
             // Actually, signOut and login again is safest for security.
             await signOut({ callbackUrl: "/auth/login" });
 
-        } catch (err) {
+        } catch {
             setError("Nie udało się zmienić hasła.");
         } finally {
             setLoading(false);

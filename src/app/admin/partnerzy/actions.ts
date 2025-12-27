@@ -1,11 +1,12 @@
 "use server";
+import { PrevActionState } from "@/types/actions";
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { logAction } from "@/lib/audit";
 import { redirect } from "next/navigation";
 
-export async function createPartner(prevState: any, formData: FormData) {
+export async function createPartner(_prevState: PrevActionState, formData: FormData) {
     const name = formData.get("name") as string;
     const type = formData.get("type") as string;
     const website = formData.get("website") as string;
@@ -35,15 +36,15 @@ export async function createPartner(prevState: any, formData: FormData) {
         revalidatePath("/admin/partnerzy");
         revalidatePath("/admin/wyglad");
         revalidatePath("/", "layout"); // Update home/layout where partners are shown
-    } catch (error) {
-        console.error("Failed to create partner:", error);
+    } catch (_error) {
+        console.error("Failed to create partner:", _error);
         return { success: false, message: "Błąd podczas tworzenia partnera." };
     }
 
     redirect("/admin/wyglad?tab=appearance&sub=appearance-partners");
 }
 
-export async function updatePartner(prevState: any, formData: FormData) {
+export async function updatePartner(_prevState: PrevActionState, formData: FormData) {
     const id = formData.get("id") as string;
     const name = formData.get("name") as string;
     const type = formData.get("type") as string;
@@ -62,8 +63,8 @@ export async function updatePartner(prevState: any, formData: FormData) {
             try {
                 const { deleteFile } = await import("@/lib/file-utils");
                 await deleteFile(beforeUpdate.logo);
-            } catch (e) {
-                console.error("Error cleaning up partner logo:", e);
+            } catch (_e) {
+                0
             }
         }
 
@@ -87,8 +88,8 @@ export async function updatePartner(prevState: any, formData: FormData) {
         revalidatePath("/admin/partnerzy");
         revalidatePath("/admin/wyglad");
         revalidatePath("/", "layout");
-    } catch (error) {
-        console.error("Failed to update partner:", error);
+    } catch (_error) {
+        console.error("Failed to update partner:", _error);
         return { success: false, message: "Błąd podczas aktualizacji." };
     }
 
@@ -104,8 +105,8 @@ export async function deletePartner(formData: FormData) {
             try {
                 const { deleteFile } = await import("@/lib/file-utils");
                 await deleteFile(beforeDelete.logo);
-            } catch (e) {
-                console.error("Error cleaning up partner file:", e);
+            } catch (_e) {
+                0
             }
 
             await prisma.partner.delete({ where: { id } });

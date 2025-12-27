@@ -84,7 +84,7 @@ export default async function AdminTeamPage(props: { searchParams: Promise<{ edi
                                         try {
                                             const cats = JSON.parse(member.categories);
                                             return Array.isArray(cats) ? cats.map((c: string) => categoryLabels[c]).join(", ") : "";
-                                        } catch (e) { return member.categories }
+                                        } catch (_e) { return member.categories }
                                     })()}</span></p>
                                 </div>
                             </div>

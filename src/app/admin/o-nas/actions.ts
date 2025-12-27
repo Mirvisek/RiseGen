@@ -5,10 +5,11 @@ import { revalidatePath } from "next/cache";
 import { logAction } from "@/lib/audit";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { PrevActionState } from "@/types/actions";
 
 // --- TEAMS SETTINGS (TOGGLES) ---
 
-export async function updateTeamSettings(prevState: any, formData: FormData) {
+export async function updateTeamSettings(_prevState: PrevActionState, formData: FormData) {
     const showBoard = formData.get("showBoard") === "on";
     const showOffice = formData.get("showOffice") === "on";
     const showCoordinators = formData.get("showCoordinators") === "on";
@@ -24,13 +25,13 @@ export async function updateTeamSettings(prevState: any, formData: FormData) {
         revalidatePath("/admin/o-nas");
         revalidatePath("/o-nas/zespol");
         return { success: true, message: "Ustawienia zespołu zaktualizowane." };
-    } catch (error) {
-        console.error("Failed to update team settings:", error);
+    } catch (_error) {
+        console.error("Failed to update team settings:", _error);
         return { success: false, message: "Wystąpił błąd podczas aktualizacji ustawień." };
     }
 }
 
-export async function updateAboutText(prevState: any, formData: FormData) {
+export async function updateAboutText(_prevState: PrevActionState, formData: FormData) {
     const aboutUsText = formData.get("aboutUsText") as string;
     const aboutUsGoals = formData.get("aboutUsGoals") as string;
     const aboutUsJoinText = formData.get("aboutUsJoinText") as string;
@@ -45,8 +46,8 @@ export async function updateAboutText(prevState: any, formData: FormData) {
         revalidatePath("/o-nas");
         revalidatePath("/admin/o-nas/ustawienia");
         return { success: true, message: "Treść strony 'O Nas' zaktualizowana." };
-    } catch (error) {
-        console.error("Failed to update about text:", error);
+    } catch (_error) {
+        console.error("Failed to update about text:", _error);
         return { success: false, message: "Wystąpił błąd podczas aktualizacji treści." };
     }
 }
@@ -59,7 +60,7 @@ function checkPermission(session: any) {
     return session && session.user && (session.user.roles.includes("ADMIN") || session.user.roles.includes("SUPERADMIN"));
 }
 
-export async function createTeamMember(prevState: any, formData: FormData) {
+export async function createTeamMember(_prevState: PrevActionState, formData: FormData) {
     const session = await getServerSession(authOptions);
     if (!checkPermission(session)) return { success: false, message: "Brak uprawnień." };
 
@@ -88,12 +89,12 @@ export async function createTeamMember(prevState: any, formData: FormData) {
         revalidatePath("/admin/o-nas");
         revalidatePath("/o-nas/zespol");
         return { success: true, message: "Członek zespołu dodany." };
-    } catch (error) {
+    } catch (_error) {
         return { success: false, message: "Błąd dodawania członka zespołu." };
     }
 }
 
-export async function updateTeamMember(id: string, prevState: any, formData: FormData) {
+export async function updateTeamMember(id: string, _prevState: PrevActionState, formData: FormData) {
     const session = await getServerSession(authOptions);
     if (!checkPermission(session)) return { success: false, message: "Brak uprawnień." };
 
@@ -115,8 +116,8 @@ export async function updateTeamMember(id: string, prevState: any, formData: For
             try {
                 const { deleteFile } = await import("@/lib/file-utils");
                 await deleteFile(beforeUpdate.image as string);
-            } catch (e) {
-                console.error("Error cleaning up team member image:", e);
+            } catch (_e) {
+                0
             }
         }
 
@@ -135,8 +136,8 @@ export async function updateTeamMember(id: string, prevState: any, formData: For
         revalidatePath("/admin/o-nas");
         revalidatePath("/o-nas/zespol");
         return { success: true, message: "Dane zaktualizowane." };
-    } catch (error) {
-        console.error(error);
+    } catch (_error) {
+        console.error(_error);
         return { success: false, message: "Błąd aktualizacji członka zespołu." };
     }
 }
@@ -152,8 +153,8 @@ export async function deleteTeamMember(id: string) {
         try {
             const { deleteFile } = await import("@/lib/file-utils");
             await deleteFile(member.image as string);
-        } catch (e) {
-            console.error("Error cleaning up team member image:", e);
+        } catch (_e) {
+            0
         }
 
         await prisma.teamMember.delete({ where: { id } });
@@ -167,14 +168,14 @@ export async function deleteTeamMember(id: string) {
 
         revalidatePath("/admin/o-nas");
         revalidatePath("/o-nas/zespol");
-    } catch (error) {
-        console.error("Error deleting team member:", error);
+    } catch (_error) {
+        console.error("Error deleting team member:", _error);
     }
 }
 
 // --- DOCUMENTS ---
 
-export async function createDocument(prevState: any, formData: FormData) {
+export async function createDocument(_prevState: PrevActionState, formData: FormData) {
     const session = await getServerSession(authOptions);
     if (!checkPermission(session)) return { success: false, message: "Brak uprawnień." };
 
@@ -203,12 +204,12 @@ export async function createDocument(prevState: any, formData: FormData) {
         revalidatePath("/admin/o-nas");
         revalidatePath("/o-nas/dokumenty");
         return { success: true, message: "Dokument dodany." };
-    } catch (error) {
+    } catch (_error) {
         return { success: false, message: "Błąd dodawania dokumentu." };
     }
 }
 
-export async function updateDocument(id: string, prevState: any, formData: FormData) {
+export async function updateDocument(id: string, _prevState: PrevActionState, formData: FormData) {
     const session = await getServerSession(authOptions);
     if (!checkPermission(session)) return { success: false, message: "Brak uprawnień." };
 
@@ -225,8 +226,8 @@ export async function updateDocument(id: string, prevState: any, formData: FormD
             try {
                 const { deleteFile } = await import("@/lib/file-utils");
                 await deleteFile(beforeUpdate.fileUrl);
-            } catch (e) {
-                console.error("Error cleaning up old document file:", e);
+            } catch (_e) {
+                0
             }
         }
 
@@ -245,7 +246,7 @@ export async function updateDocument(id: string, prevState: any, formData: FormD
         revalidatePath("/admin/o-nas");
         revalidatePath("/o-nas/dokumenty");
         return { success: true, message: "Dokument zaktualizowany." };
-    } catch (error) {
+    } catch (_error) {
         return { success: false, message: "Błąd aktualizacji dokumentu." };
     }
 }
@@ -261,8 +262,8 @@ export async function deleteDocument(id: string) {
         try {
             const { deleteFile } = await import("@/lib/file-utils");
             await deleteFile(doc.fileUrl);
-        } catch (e) {
-            console.error("Error cleaning up document file:", e);
+        } catch (_e) {
+            0
         }
 
         await prisma.document.delete({ where: { id } });
@@ -276,14 +277,14 @@ export async function deleteDocument(id: string) {
 
         revalidatePath("/admin/o-nas");
         revalidatePath("/o-nas/jak-dzialamy");
-    } catch (error) {
-        console.error("Error deleting document:", error);
+    } catch (_error) {
+        console.error("Error deleting document:", _error);
     }
 }
 
 // --- HOME HERO SLIDES ---
 
-export async function createHomeSlide(prevState: any, formData: FormData) {
+export async function createHomeSlide(_prevState: PrevActionState, formData: FormData) {
     const session = await getServerSession(authOptions);
     if (!checkPermission(session)) return { success: false, message: "Brak uprawnień." };
 
@@ -314,12 +315,12 @@ export async function createHomeSlide(prevState: any, formData: FormData) {
         revalidatePath("/");
         revalidatePath("/admin/wyglad");
         return { success: true, message: "Slajd dodany." };
-    } catch (error) {
+    } catch (_error) {
         return { success: false, message: "Błąd dodawania slajdu." };
     }
 }
 
-export async function updateHomeSlide(id: string, prevState: any, formData: FormData) {
+export async function updateHomeSlide(id: string, _prevState: PrevActionState, formData: FormData) {
     const session = await getServerSession(authOptions);
     if (!checkPermission(session)) return { success: false, message: "Brak uprawnień." };
 
@@ -338,8 +339,8 @@ export async function updateHomeSlide(id: string, prevState: any, formData: Form
             try {
                 const { deleteFile } = await import("@/lib/file-utils");
                 await deleteFile(beforeUpdate.image);
-            } catch (e) {
-                console.error("Error cleaning up slide image:", e);
+            } catch (_e) {
+                0
             }
         }
 
@@ -358,7 +359,7 @@ export async function updateHomeSlide(id: string, prevState: any, formData: Form
         revalidatePath("/");
         revalidatePath("/admin/wyglad");
         return { success: true, message: "Slajd zaktualizowany." };
-    } catch (error) {
+    } catch (_error) {
         return { success: false, message: "Błąd aktualizacji slajdu." };
     }
 }
@@ -374,8 +375,8 @@ export async function deleteHomeSlide(id: string) {
         try {
             const { deleteFile } = await import("@/lib/file-utils");
             await deleteFile(slide.image);
-        } catch (e) {
-            console.error("Error cleaning up slide image:", e);
+        } catch (_e) {
+            0
         }
 
         await prisma.homeHeroSlide.delete({ where: { id } });
@@ -389,7 +390,7 @@ export async function deleteHomeSlide(id: string) {
 
         revalidatePath("/");
         revalidatePath("/admin/wyglad");
-    } catch (error) {
-        console.error("Error deleting slide:", error);
+    } catch (_error) {
+        console.error("Error deleting slide:", _error);
     }
 }

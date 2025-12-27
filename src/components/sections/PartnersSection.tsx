@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import Image from "next/image";
+import { Partner } from "@prisma/client";
 
 export async function PartnersSection() {
     const partners = await prisma.partner.findMany({
@@ -72,7 +73,7 @@ export async function PartnersSection() {
     );
 }
 
-function PartnerLogo({ partner }: { partner: any }) {
+function PartnerLogo({ partner }: { partner: Partner }) {
     return (
         <a
             href={partner.website || "#"}

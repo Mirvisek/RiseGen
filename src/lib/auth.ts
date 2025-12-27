@@ -34,7 +34,7 @@ export const authOptions: NextAuthOptions = {
                         // But if we just generated it, it's string.
                         roles = JSON.parse(user.roles);
                     }
-                } catch (e) {
+                } catch {
                     // Fallback for simple string if migration failed cleanly or legacy data
                     roles = [user.roles];
                 }

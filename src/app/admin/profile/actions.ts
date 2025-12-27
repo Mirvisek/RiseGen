@@ -1,4 +1,5 @@
 "use server";
+import { PrevActionState } from "@/types/actions";
 
 import { z } from "zod";
 import { getServerSession } from "next-auth";
@@ -25,7 +26,7 @@ const PasswordSchema = z.object({
 
 import { compare } from "bcryptjs";
 
-export async function changePassword(prevState: any, formData: FormData) {
+export async function changePassword(_prevState: PrevActionState, formData: FormData) {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
         return { success: false, message: "Nie jesteś zalogowany." };
@@ -86,8 +87,8 @@ export async function changePassword(prevState: any, formData: FormData) {
                 : "Hasło zmienione, ale nie udało się wysłać maila. Sprawdź logi."
         };
 
-    } catch (error) {
-        console.error("Password change error:", error);
+    } catch (_error) {
+        console.error("Password change error:", _error);
         return { success: false, message: "Wystąpił błąd serwera." };
     }
 }

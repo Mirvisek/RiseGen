@@ -1,4 +1,5 @@
 'use server'
+import { PrevActionState } from "@/types/actions";
 
 import { prisma } from "@/lib/prisma";
 

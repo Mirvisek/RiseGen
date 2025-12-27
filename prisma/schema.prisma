@@ -315,3 +315,25 @@ model Donation {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
+
+model Comment {
+  id         String   @id @default(cuid())
+  content    String
+  author     String
+  email      String
+  
+  // Polymorphic relation
+  entityType String  // "News" | "Project" | "Event"
+  entityId   String
+  
+  status     String   @default("PENDING") // PENDING, APPROVED, SPAM
+  parentId   String?  // For replies
+  parent     Comment? @relation("CommentReplies", fields: [parentId], references: [id])
+  replies    Comment[] @relation("CommentReplies")
+  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  
+  @@index([entityType, entityId])
+  @@index([status])
+}
