@@ -29,12 +29,14 @@ function PhoneNumber({ phone }: { phone: string }) {
         setMounted(true);
     }, []);
 
-    if (!mounted) {
-        return <span>{phone}</span>;
-    }
+    const phoneDigits = phone.replace(/\s/g, '');
 
     return (
-        <a href={`tel:${phone.replace(/\s/g, '')}`} className="hover:text-indigo-600 transition">
+        <a
+            href={mounted ? `tel:${phoneDigits}` : '#'}
+            className={`hover:text-indigo-600 transition-colors ${!mounted ? "cursor-default pointer-events-none" : ""}`}
+            onClick={(e) => !mounted && e.preventDefault()}
+        >
             {phone}
         </a>
     );

@@ -63,7 +63,7 @@ export default async function Home() {
     switch (sectionId) {
       case "hero":
         return showHero && (
-          <div key="hero" className="animate-in fade-in duration-1000">
+          <div key="hero" className="animate-in fade-in duration-1000 min-h-[500px]">
             {slides.length > 0 ? (
               <HomeHeroCarousel slides={slides} config={config} />
             ) : (

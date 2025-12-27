@@ -159,7 +159,12 @@ export default async function RootLayout({
         />
         {/* Custom Head Code */}
         {config?.headCode && (
-          <div dangerouslySetInnerHTML={{ __html: config.headCode }} />
+          <script
+            id="head-code-injection"
+            dangerouslySetInnerHTML={{
+              __html: `document.head.insertAdjacentHTML('beforeend', ${JSON.stringify(config.headCode)})`
+            }}
+          />
         )}
       </head>
       <body
