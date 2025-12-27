@@ -55,9 +55,28 @@ const authMiddleware = withAuth(
 export default async function middleware(req: NextRequest, event: any) {
     if (process.env.NODE_ENV === "production") {
         const forwardedProto = req.headers.get("x-forwarded-proto");
+
         if (forwardedProto === "http") {
+            const requestHeaders = new Headers(req.headers);
+            const host = requestHeaders.get("x-forwarded-host") || requestHeaders.get("host");
+
             const newUrl = req.nextUrl.clone();
             newUrl.protocol = "https:";
+
+            // Ensure we use the forwarded host if available to avoid localhost redirects from proxy
+            if (host) {
+                // Try to strip port if it's 3000 or similar internal port if needed, 
+                // but mainly respect the header value which should be the public domain.
+                newUrl.host = host;
+
+                // If the host in header does not look like localhost/IP, clear explicit port 
+                // (unless it was part of the forwarded host string)
+                if (!host.includes("localhost") && !host.match(/^\d+\.\d+\.\d+\.\d+$/)) {
+                    // Force default https port behavior (browsers hide 443)
+                    newUrl.port = "";
+                }
+            }
+
             return NextResponse.redirect(newUrl, 301);
         }
     }
