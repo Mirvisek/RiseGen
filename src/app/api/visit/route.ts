@@ -22,9 +22,14 @@ export async function POST(req: Request) {
             return NextResponse.json({ success: true, ignored: true });
         }
 
+        const ip = req.headers.get('x-forwarded-for')?.split(',')[0] ||
+            req.headers.get('x-real-ip') ||
+            "unknown";
+
         await prisma.visitLog.create({
             data: {
                 path: path,
+                ip: ip
             }
         });
 
